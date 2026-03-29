@@ -1121,7 +1121,7 @@ function obLaunch() {
       'Content-Type': 'application/json',
       'apikey': SB_KEY,
     },
-    body: JSON.stringify({ email, create_user: true, options: { email_redirect_to: redirectTo } }),
+    body: JSON.stringify({ email, create_user: true, email_redirect_to: redirectTo }),
   })
   .then(r => r.json())
   .then(data => {
