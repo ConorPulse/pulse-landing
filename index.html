@@ -57,23 +57,52 @@
       align-items: center; justify-content: center; flex-direction: column;
       pointer-events: none;
     }
-    #iStory { text-align: center; padding: 0 28px; }
-    .iLine {
-      display: block;
+    #iLine {
+      font-family: 'Instrument Sans', system-ui, sans-serif;
+      font-size: clamp(18px, 3.5vw, 28px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.01em;
+      text-align: center;
+      padding: 0 40px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      text-shadow: 0 2px 24px rgba(0,0,0,0.9);
+      line-height: 1.4;
+    }
+    #iLine.tag-style {
+      font-size: clamp(10px, 1.4vw, 13px);
+      font-weight: 600; letter-spacing: 0.22em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45);
+    }
+    #iLine.big-style {
+      font-size: clamp(20px, 4vw, 32px);
+      font-weight: 400; color: #fff;
+    }
+    #iLine {
       font-family: var(--sans);
       font-size: clamp(16px, 2.8vw, 22px);
-      font-weight: 400; color: rgba(255,255,255,0.88);
-      letter-spacing: 0.02em; line-height: 2;
-      opacity: 0; transition: opacity 0.7s ease;
+      font-weight: 400;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+      text-align: center;
+      padding: 0 28px;
       text-shadow: 0 1px 20px rgba(0,0,0,1);
+      max-width: 600px;
     }
-    .iLine.tag {
-      font-size: clamp(10px, 1.3vw, 12px); font-weight: 600;
-      letter-spacing: 0.22em; text-transform: uppercase;
-      color: rgba(255,255,255,0.4); margin-bottom: 10px;
+    #iLine.tag-style {
+      font-size: clamp(10px, 1.3vw, 12px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
     }
-    .iLine.big { color: #fff; margin-top: 16px; }
-    .iLine.on  { opacity: 1; }
+    #iLine.big-style {
+      font-size: clamp(18px, 3.2vw, 26px);
+      color: #fff;
+      font-weight: 500;
+    }
     #iWordmark {
       position: absolute;
       top: 50%; left: 50%;
@@ -140,7 +169,6 @@
       transition: opacity 0.4s, transform 0.4s;
     }
     .tag.on { opacity: 1; transform: none; }
-    .iLine.tag { opacity: 0; transform: none; transition: opacity 0.5s ease; }
     .line.on    { opacity: 1; transform: none; }
     .line.it    { font-style: italic; }
     .line.tl    { color: var(--teal); }
@@ -356,24 +384,13 @@
 
 <!-- STORY: hidden/shown via JS style.display -->
 <div id="storyLayer">
-  <div id="iStory">
-    <span class="iLine tag" data-t="1.0">Monday &middot; 07:45</span>
-    <span class="iLine" data-t="2.2">It&rsquo;s 7:45.</span>
-    <span class="iLine" data-t="5.2">Still in the car.</span>
-    <span class="iLine" data-t="4.2">Rain hammering down.</span>
-    <span class="iLine" data-t="3.2">Traffic at a standstill.</span>
-    <span class="iLine" data-t="6.0">Phone rings.</span>
-    <span class="iLine" data-t="6.8">Nurse off sick.</span>
-    <span class="iLine" data-t="7.5">Another message.</span>
-    <span class="iLine" data-t="8.2">Surgery 2 down.</span>
-    <span class="iLine" data-t="9.0">You&rsquo;re not even in yet.</span>
-    <span class="iLine big" data-t="10.2">Everyone looks to you for an answer.</span>
-    <span class="iLine big" data-t="11.2">You look to Pulse.</span>
-  </div>
-  <div id="iWordmark">
+  <div id="iLine" style="display:none;"></div>
+  <div id="iWordmark" style="display:none;">
     <span id="iWordName">Pulse</span>
     <span id="iWordSub">Staff management &middot; Built for dental</span>
   </div>
+</div>
+
 </div>
 
 <!-- GATE: password screen -->
@@ -556,53 +573,104 @@
 const PASS = "pulse2026";
 const app  = document.getElementById('app');
 
-function showApp() {
-  // Hide story
-  const story = document.getElementById('storyLayer');
-  story.style.opacity = '0';
-  story.style.transition = 'opacity 0.8s ease';
-  setTimeout(() => { story.style.display = 'none'; }, 800);
+// ── Story sequence ────────────────────────────────────────────────────────────
+// Each entry: [text, cssClass, holdMs, pauseAfterMs]
+const STORY = [
+  ['Monday · 07:45',                     'tag-style',  1400,  200],
+  ["It\u2019s 7:45.",                         '',           1200,  100],
+  ['Still in the car.',                   '',           1200,  100],
+  ['Rain hammering down.',                '',           1200,  100],
+  ['Traffic at a standstill.',            '',           1200,  100],
+  ['Phone rings.',                        '',           1000,  400],
+  ['Nurse off sick.',                     '',           1200,  100],
+  ['Another message.',                    '',           1000,  100],
+  ['Surgery 2 down.',                     '',           1200,  100],
+  ["You\u2019re not even in yet.",            '',           1400,  600],
+  ['Everyone looks to you for an answer.','big-style',  2000,  200],
+  ['You look to Pulse.',                  'big-style',  2400,  0  ],
+];
 
-  // Show app
+function showApp() {
+  const story = document.getElementById('storyLayer');
+  story.style.transition = 'opacity 0.9s ease';
+  story.style.opacity    = '0';
+  setTimeout(() => { story.style.display = 'none'; }, 900);
+
   app.style.display = 'block';
-  requestAnimationFrame(() => requestAnimationFrame(() => { app.classList.add('on'); boot(); }));
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    app.classList.add('on');
+    boot();
+  }));
+}
+
+function showWordmark(cb) {
+  const story  = document.getElementById('storyLayer');
+  const iline  = document.getElementById('iLine');
+  const wmark  = document.getElementById('iWordmark');
+
+  // Fade out the last story line
+  iline.style.opacity = '0';
+
+  setTimeout(() => {
+    // Hide the text line, show wordmark
+    iline.style.display = 'none';
+    if (wmark) {
+      wmark.style.display = 'block';
+      wmark.style.opacity = '0';
+      wmark.style.transition = 'opacity 1.2s ease';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        wmark.style.opacity = '1';
+      }));
+    }
+    // Hold wordmark for 3 seconds then go to page
+    setTimeout(cb, 3000);
+  }, 700);
+}
+
+function runStory(index, cb) {
+  if (index >= STORY.length) { showWordmark(cb); return; }
+
+  const [text, cls, holdMs, pauseAfterMs] = STORY[index];
+  const iline = document.getElementById('iLine');
+
+  // Set content and class
+  iline.textContent  = text;
+  iline.className    = cls || '';
+  iline.style.transition = 'opacity 0.6s ease';
+  iline.style.opacity    = '0';
+  iline.style.display    = 'block';
+
+  // Fade in
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    iline.style.opacity = '1';
+  }));
+
+  // Hold, then fade out, then next line
+  setTimeout(() => {
+    iline.style.transition = 'opacity 0.5s ease';
+    iline.style.opacity    = '0';
+    setTimeout(() => {
+      runStory(index + 1, cb);
+    }, 500 + pauseAfterMs);
+  }, holdMs);
 }
 
 function runIntro() {
   const eye   = document.getElementById('eyeLayer');
   const vid   = document.querySelector('#eyeLayer video');
   const story = document.getElementById('storyLayer');
-  const lines = document.querySelectorAll('.iLine');
-  const wmark = document.getElementById('iWordmark');
-  const istory = document.getElementById('iStory');
-  let done = false;
 
-  // Show eye
+  // Fade in eye video
   eye.style.opacity = '1';
 
-  // Show story overlay — use style.display directly, never classList
-  story.style.cssText = 'position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none;';
+  // Show story overlay
+  story.style.cssText = 'position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;';
 
   // Play video
   if (vid) vid.play().catch(() => {});
 
-  // Wall-clock drives timing reliably
-  const start = Date.now();
-  const timer = setInterval(() => {
-    if (done) { clearInterval(timer); return; }
-    const t = (vid && vid.readyState >= 2 && !vid.paused && vid.currentTime > 0.1)
-      ? vid.currentTime
-      : (Date.now() - start) / 1000;
-
-    lines.forEach(l => { if (t >= parseFloat(l.dataset.t)) l.classList.add('on'); });
-
-    if (t >= 13.0 && !wmark.classList.contains('on')) {
-      istory.style.transition = 'opacity 0.7s ease';
-      istory.style.opacity = '0';
-      wmark.classList.add('on');
-    }
-    if (t >= 16.5) { done = true; showApp(); }
-  }, 80);
+  // Run story sequence then show app
+  runStory(0, showApp);
 }
 
 function tryPass() {
@@ -611,7 +679,7 @@ function tryPass() {
   if (!inp) return;
   if (inp.value.trim() === PASS) {
     const gate = document.getElementById('gate');
-    gate.style.opacity = '0';
+    gate.style.opacity    = '0';
     gate.style.visibility = 'hidden';
     gate.style.pointerEvents = 'none';
     sessionStorage.setItem('pu', '1');
@@ -624,7 +692,7 @@ function tryPass() {
   }
 }
 
-// Returning visitors — still play story, just skip gate
+// Returning visitors — skip gate, still play story
 if (sessionStorage.getItem('pu')) {
   document.getElementById('gate').style.display = 'none';
   setTimeout(runIntro, 100);
@@ -639,44 +707,42 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function boot() {
-  // Reveal all content elements immediately
   const show = (sel, delay) => {
     document.querySelectorAll(sel).forEach((el, i) => {
       setTimeout(() => el.classList.add('on'), delay + i * 60);
     });
   };
-  show('[data-fc]', 100);
-  show('[data-pal]', 80);
-  show('[data-tag]', 80);
-  show('[data-bandtag]', 80);
-  show('[data-cred]', 200);
-  show('[data-penny]', 240);
+  show('[data-fc]',      100);
+  show('[data-pal]',      80);
+  show('[data-tag]',      80);
+  show('[data-bandtag]',  80);
+  show('[data-cred]',    200);
+  show('[data-penny]',   240);
   show('[data-pricing]', 280);
-  show('[data-final]', 320);
-  show('[data-finalh]', 340);
-  show('[data-finalp]', 360);
-  show('[data-finalf]', 380);
-  show('[data-box]', 200);
+  show('[data-final]',   320);
+  show('[data-finalh]',  340);
+  show('[data-finalp]',  360);
+  show('[data-finalf]',  380);
+  show('[data-box]',     200);
 
-  // Scroll-triggered reveal for below-fold elements
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
     }, { threshold: 0.08 });
-    document.querySelectorAll('[data-fc],[data-pal],[data-cred],[data-penny],[data-pricing],[data-final],[data-finalh],[data-finalp],[data-finalf]').forEach(el => io.observe(el));
+    document.querySelectorAll('[data-fc],[data-pal],[data-cred],[data-penny],[data-pricing],[data-final],[data-finalh],[data-finalp],[data-finalf]')
+      .forEach(el => io.observe(el));
   }
 
-  // Command palette typewriter demo
   palAnim();
 }
 
 function palAnim() {
   const q = document.getElementById('pq');
   if (!q) return;
-  const body  = document.querySelector('.pal-body');
-  const pw    = document.getElementById('pw');
-  const ph    = q.querySelector('.pal-ph');
-  const cur   = q.querySelector('.pal-cur');
+  const body    = document.querySelector('.pal-body');
+  const pw      = document.getElementById('pw');
+  const ph      = q.querySelector('.pal-ph');
+  const cur     = q.querySelector('.pal-cur');
   const queries = ['Find cover for Savanna Butler…', 'Who can do MOS today?', 'Check Brooklands staffing…'];
   let qi = 0;
 
