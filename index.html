@@ -1,582 +1,3 @@
-
-PulseRota- DCO Dental
-/
-
-OmniRota_v10_0_0_PART2_15.js
-js
-
-
-OmniRota_v10_0_0_PART1_15.js
-js
-
-Screenshot 2026-03-29 at 17.25.44.png
-Okay help we have an error in the new code. reference files out of date. Coudl be where i pasted the chat. new code attached. and erro code
-
-17:26
-
-Viewed 2 files
-Viewed 2 files
-Got it. Line 7938 has an extra ) — it reads })); but should be });.
-
-The fetch(...) call doesn't need the double closing parens. Here's the fix:
-
-Find:
-
-js
-      }));
-      if (!resp.ok) {
-Replace with:
-
-js
-      });
-      if (!resp.ok) {
-That's a single character change — just delete one ) from line 7938. Make that edit in GitHub directly and it'll deploy cleanly.
-
-Coudl you redo sort for me? file one or two?
-
-17:27
-
-Sought clarification on ambiguous sorting request
-Sought clarification on ambiguous sorting request
-Can you give me a bit more context? When you say "redo sort" — do you mean:
-
-Sorting in a specific tab (e.g. Bradford/Sickness list, Staff Directory, leave requests)?
-A sort button/feature that was working before but broke?
-Or something else entirely?
-Just point me at where it should be and what it should do and I'll get it fixed.
-
-Sorry i feel more confidinet if you corrcet the code and not me. I can then download and depoly
-
-17:28
-
-Thought for 1s
-Thought for 1s
-No worries at all — let me fix it and give you the file.
-
-
-Ran 2 commands, edited a file, read a file
-Ran 2 commands, edited a file, read a file
-There you go. Part 1 fixed — single character change, the rogue ) on line 7938 is gone.
-
-Part 2 is unchanged so use your existing file for that. Paste Part 1 first, then Part 2 straight after, save once — should deploy clean.
-
-Omnirota v10 0 0 part1 fixed
-JS 
-Screenshot 2026-03-29 at 17.30.32.png
-Screenshot 2026-03-29 at 17.30.49.png
-Error again. Coudl it be where i posted chat.js in api file?
-
-17:31
-
-Thought for 1s
-Thought for 1s
-New error is in Part 2 this time — line 15630. Let me check it.
-
-
-Check around line 15630 in Part 2
-Check around line 15630 in Part 2
-Found it. Same pattern — broken brackets on the fetch call. Line 4373-4374 in Part 2:
-
-js
-...msgs.filter((_,i)=>i>0).map(m=>({role:m.role,content:m.text}),
-      }));
-Missing a closing ] and ) for the messages array, and same rogue ) on the fetch. Let me fix it.
-
-
-Ran 2 commands, edited a file, read a file
-Ran 2 commands, edited a file, read a file
-Part 2 fixed. The messages array was missing its closing ] and ).
-
-To be clear — the chat.js in your /api folder is fine, it's not causing this. Both errors were paste artifacts in App.js from the last session. Use the Part 1 fixed from earlier + this Part 2 fixed, paste in order, should deploy clean this time.
-
-Omnirota v10 0 0 part2 fixed
-JS 
-Screenshot 2026-03-29 at 17.36.24.png
-Screenshot 2026-03-29 at 17.36.24 (2).png
-17:36
-
-Thought for 2s
-Thought for 2s
-Another one. Line 21406 in the combined file = line 10148 in Part 2. Let me check.
-
-
-Check around line 10148 in Part 2
-Check around line 10148 in Part 2
-Same issue again — })); on line 10150. There are multiple of these throughout the file. Let me scan and fix them all at once.
-
-
-Identified problematic code instances in fetch calls
-Identified problematic code instances in fetch calls
-There are two bad ones in fetch contexts — lines 10150 and 10175. Let me fix both.
-
-
-The user prompt is empty, so there is no primary language to match. However, based on the thinking block being in English, here is the summary: Identified legitimate code syntax and pinpointed problematic fetch implementation
-The user prompt is empty, so there is no primary language to match. However, based on the thinking block being in English, here is the summary: Identified legitimate code syntax and pinpointed problematic fetch implementation
-Good — line 10175 is actually a legitimate set(s=>({...})) call, that one is fine. Only line 10150 needs fixing.
-
-
-Viewed a file, edited a file, ran a command
-Viewed a file, edited a file, ran a command
-Updated Part 2 — that was the third })); on a fetch call, all the same paste corruption. Use the Part 1 fixed from earlier + this new Part 2 fixed. Should be clean now. Let me know what Vercel says.
-
-Omnirota v10 0 0 part2 fixed
-JS 
-Could you post part 1?
-
-17:39
-
-Thinking about identifying and retrieving a previously shared document part
-Thinking about identifying and retrieving a previously shared document part
-There you go — Part 1. Paste that first, then Part 2, save once.
-
-Omnirota v10 0 0 part1 fixed
-JS 
-Phew its working again. thankls claude you star
-
-18:57
-
-Celebrated successful resolution
-Celebrated successful resolution
-Brilliant! Glad we got there — those paste corruption bugs are sneaky when there are multiple of them hiding in the file.
-
-Go enjoy the rest of your Sunday! 🙌
-
-
-Omni.docx
-docx
-
-Okay- back to main aim of today. Plan is to get iris onbaording sorted and link it to the prima-luc site so a pracrtcie coudl onboard and tenant teh site. We are going to test this with flourish. So it ahs to be they enter this site and sign up. irois helps them- think quick wins and gets themn onto rota. A lot of this has been built. It will be tenanted onto floursh.omni-rota.com. Do you get all taht claude? ANy questions- could you look at code for what has been built already? I think vercel ready to go
-
-19:03
-
-Viewed 3 files, ran 2 commands
-Viewed 3 files, ran 2 commands
-Good — I've got a full picture now. Here's where things stand:
-
-What's already built and working:
-
-PennyOnboarding component fires for any non-DCO tenant when setup_complete is false
-Iris chat collects: role, practice name, sites, surgeries, nurse count
-On completion writes setup_complete, practiceProfile, practiceSites to both state and Supabase
-Also writes to the practices table (for login branding)
-Routing logic: !setup_complete && !IS_DCO && role === principal/manager → shows onboarding
-What's missing / needs doing for Flourish:
-
-The sign-up front door — someone hits prima-luce.com or omni-rota.com, clicks "Get started", and gets routed to flourish.omni-rota.com. There's no self-serve subdomain provisioning yet — someone still has to manually create the tenant
-The branding/naming — still says "Penny" in the UI (placeholder text, avatar label, header). Needs to say "Iris"
-API key — new tenant has no API key set, so Iris chat will fail silently. Need a flow to collect it, or use a shared key
-flourish.omni-rota.com DNS — wildcard *.omni-rota.com needs to be live on Vercel
-My questions before building:
-
-For Flourish specifically — are you just manually setting up flourish as a tenant (you know Emily, you can do it by hand), or do you want a proper self-serve "Get started" sign-up flow from prima-luce.com?
-The API key for Iris during onboarding — should it use your shared Anthropic key, or does each practice need their own?
-Is the wildcard DNS on omni-rota.com already configured on Vercel, or is that still pending?
-That'll shape whether this is a 30-minute polish job or something bigger.
-
-Okay one thing. We have renamed the ai assistant iris. Omni is has its meanings but we have also used Oweners and Managers need Iris! W ethink Iris ais a better name so renamed it today. I think wild acrd is configured- tell me where to go and i will take an image?  APi key- no idea- whats best? I wnat emily to sign up as if new practcie so can test. Also the ai console (if right name) had to match our styling
-
-19:06
-
-Synthesized four technical queries spanning DNS, authentication, testing, and design alignment
-Synthesized four technical queries spanning DNS, authentication, testing, and design alignment
-Good questions, let me take them one by one:
-
-Wildcard DNS — go here: Vercel → your pulserota project → Settings → Domains — take a screenshot of what's listed there and I can tell you if the wildcard is set up correctly.
-
-API key for new tenants: Best approach is a shared key that lives in your Vercel environment variables (ANTHROPIC_API_KEY). New practices get Iris working out of the box without needing to supply their own key. You control the cost, and at this stage (testing + early adopters) it's trivial. Once you're at scale you can revisit. I'll wire it so the /api/chat serverless function uses the env var, not the per-tenant stored key.
-
-What needs fixing before Emily can sign up:
-
-Wildcard DNS confirmed live
-Onboarding UI rebuilt — dark electric styling to match Omni (the current one is light/warm "Penny" colours, totally wrong)
-"Penny" renamed to "Iris" throughout
-API key wired via env var so Iris actually works for new tenants
-The onboarding screen currently looks like this vs what it should:
-
-❌ Light beige 
-#edecea background, says "Penny · practice setup"
-✅ Should be dark 
-#100f1a, Omni. wordmark with teal dot, "Iris · practice setup", electric teal accents
-Send me that Vercel domains screenshot and I'll start on the rebuild while you check.
-
-Screenshot 2026-03-29 at 19.08.00.png
-Api wise no problem
-
-19:08
-
-Orchestrated DNS validation and charted component redesign strategy
-Orchestrated DNS validation and charted component redesign strategy
-Wildcard is live ✅ — *.omni-rota.com Valid Configuration. flourish.omni-rota.com will work right now.
-
-For the API key — do this first: Vercel → your project → Settings → Environment Variables → Add:
-
-Key: ANTHROPIC_API_KEY
-Value: your Anthropic key
-Environment: Production ✓
-Then I need to update /api/chat.js to use it as a fallback. Quick — can you click on chat.js in GitHub and paste what's in it? Then I'll update it + rebuild the onboarding in one go.
-
-While you do that I'll start on the Iris onboarding rebuild — dark electric styling, proper Omni. branding, "Iris" throughout. The logic is solid, it's just the skin and naming that needs replacing.
-
-
-Ran a command, viewed a file, edited a file
-Ran a command, viewed a file, edited a file
-Now replace the PENNY_SYSTEM prompt and the entire UI:
-
-
-Replace PENNY_SYSTEM with IRIS_SYSTEM
-Replace PENNY_SYSTEM with IRIS_SYSTEM
-Now replace the entire UI section (done state + return):
-
-
-Replace Penny light UI with Iris dark electric UI
-Replace Penny light UI with Iris dark electric UI
-Now fix the fixed })); on line 10148 which was already in the working copy:
-
-
-Ran 2 commands, viewed a file, edited a file
-Ran 2 commands, viewed a file, edited a file
-New Part 2 — Iris onboarding rebuilt. Use Part 1 fixed from earlier + this one.
-
-Before you deploy, do the Vercel env var first: Vercel → pulserota project → Settings → Environment Variables → Add:
-
-ANTHROPIC_API_KEY = your key
-Tick: Production, Preview, Development
-What changed:
-
-Dark 
-#100f1a background throughout
-Omni. wordmark with teal dot in header
-"Iris · setup" badge with glowing dot
-"Reply to Iris…" input
-"You're live." completion screen in electric green italic
-Typing dots in teal
-All fetch bugs fixed
-Then paste your chat.js content and I'll update it to use the env var as fallback so Emily's Iris chat actually works when she signs up at flourish.omni-rota.com.
-
-Omnirota v10 0 0 part2 iris
-JS 
-Screenshot 2026-03-29 at 19.12.53.png
-19:13
-
-Identified missing API configuration and planned implementation strategy
-Identified missing API configuration and planned implementation strategy
-No ANTHROPIC_API_KEY there yet — you need to add it. Click "Add a new" (usually top right of that list) and add:
-
-Key: ANTHROPIC_API_KEY
-Value: your Anthropic key (from console.anthropic.com → API Keys)
-All Environments ticked
-While you do that — can you also open chat.js from GitHub and paste its contents? I need to see it to wire the env var fallback so Iris works for Emily without a key.
-
-Screenshot 2026-03-29 at 19.14.19.png
-that look right?
-
-19:14
-
-Verified setup configuration and recommended saving
-Verified setup configuration and recommended saving
-Yes that's perfect — hit Save. ✅
-
-Also I can see your actual API key in that screenshot — you might want to delete this image after, and worth knowing that key is now visible. Not urgent but something to be aware of.
-
-Now paste me the contents of chat.js from GitHub and I'll update it to use that env var so Iris works for Emily.
-
-so chat.js : // api/chat.js — Vercel serverless function
-// Proxies requests to Anthropic API, avoiding CORS browser restrictions
-// Deploy: place this file in /api/chat.js in your GitHub repo root
-export default async function handler(req, res) {
-  // CORS headers — allow from omni-rota.com and subdomains
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-api-key');
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-  try {
-    const { messages, system, max_tokens = 400, model = 'claude-sonnet-4-6' } = req.body;
-    const apiKey = req.headers['x-api-key'] || process.env.ANTHROPIC_API_KEY || '';
-    if (!apiKey) {
-      return res.status(401).json({ error: 'No API key provided' });
-    }
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens,
-        ...(system ? { system } : {}),
-        messages,
-      }),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      return res.status(response.status).json({ error: data.error?.message || 'Anthropic API error' });
-    }
-    return res.status(200).json(data);
-  } catch (err) {
-    console.error('Chat proxy error:', err);
-    return res.status(500).json({ error: err.message || 'Internal server error' });
-  }
-}
-
-Show more
-20:12
-
-Verified existing fallback mechanism; deployment ready
-Verified existing fallback mechanism; deployment ready
-chat.js is already perfect — look at this line:
-
-js
-const apiKey = req.headers['x-api-key'] || process.env.ANTHROPIC_API_KEY || '';
-It already tries the user's key first, then falls back to your env var. No changes needed.
-
-So you're actually good to go right now. Here's the full checklist:
-
-✅ Wildcard DNS live (*.omni-rota.com)
-✅ chat.js wired for env var fallback
-✅ ANTHROPIC_API_KEY added to Vercel (just saved)
-✅ New Iris onboarding — dark electric styling, correct branding
-✅ All fetch bugs fixed
-Deploy now: Use Part 1 fixed (from earlier) + Part 2 iris (just built). Paste Part 1, then Part 2, save once.
-
-Once live, Emily goes to flourish.omni-rota.com, logs in (Google SSO), and Iris fires automatically because setup_complete will be false for the flourish tenant. She chats through setup, hits confirm, and she's live on her rota.
-
-Have you got the code for prima-luce?
-
-20:12
-
-Searched memory for unavailable project files
-Searched memory for unavailable project files
-No — the filesystem resets between sessions so I don't have it here.
-
-The code lives in your GitHub repo ConorPulse/pulse-landing as index.html. Can you either:
-
-Go to GitHub → ConorPulse/pulse-landing → click index.html → click the raw/copy button and paste it here, or
-Upload the file directly
-Then I can add a "Get started" button that routes new practices to omni-rota.com to kick off the Iris onboarding flow.
-
-I will post here and can you give it as adownlaod and i will pop in reference files
-
-20:13
-
-Thinking about setting up a collaborative document submission and reference process
-Thinking about setting up a collaborative document submission and reference process
-Perfect — paste it and I'll give you a clean download ready to drop in.
-
-
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta name="robots" content="noindex, nofollow"> <title>Omni. — Always present</title> <link rel="preconnect" href="https://fonts.googleapis.com"> <link r
-
-pasted
-
-so index:
-
-20:14
-
-Identified updates needed for HTML file modifications
-Identified updates needed for HTML file modifications
-Got it. I'll update it — Penny → Iris, add a proper "Get started" button that routes to omni-rota.com, and fix the broken HTML in the final section (there's an orphaned </div> in there too).
-
-
-Ran 2 commands, read a file
-Ran 2 commands, read a file
-There you go. What changed:
-
-Penny → Iris throughout:
-
-New iris-card with glowing gradient avatar (I), pulsing dot
-"Meet Iris. Your setup guide."
-"Owners and Managers Need Iris" badge underneath — love that backronym
-Removed the old beige Penny styling entirely
-New "Get started with Iris" button:
-
-Teal, prominent, links to omni-rota.com
-Arrow icon, "Takes about 3 minutes · No card required" underneath
-Sits right after the Iris card so the flow is: meet Iris → click → she greets you
-Also fixed:
-
-Broken HTML in the final section (orphaned </div>)
-Added missing signup() function (the form had onsubmit="signup()" but no function existed)
-Drop this into pulse-landing repo replacing index.html and it's live.
-
-Index
-Code · HTML 
-Okay and does that link to omni rota?
-
-20:18
-
-Thinking about the relationship between omni rota and a previously discussed topic
-Thinking about the relationship between omni rota and a previously discussed topic
-Not quite — there's a gap here worth flagging.
-
-The button links to omni-rota.com (root domain). But when someone lands there, the subdomain detection code looks for *.omni-rota.com — the root doesn't match any tenant, so it won't trigger Iris.
-
-For Emily's test right now: just send her directly to flourish.omni-rota.com. She logs in via Google SSO, setup_complete is false for that tenant, Iris fires automatically. That works today.
-
-For the general "Get started" flow (a stranger clicking the button on prima-luce.com), there's a missing step — they need a subdomain first. Two options:
-
-Option A — Quick fix (good enough for now): Change the button to link directly to flourish.omni-rota.com just for Emily's test, or point it at a specific "new practice" subdomain like start.omni-rota.com which you pre-configure.
-
-Option B — Proper self-serve (bigger job): Button goes to a simple page that asks "What's your practice name?" → generates a slug → redirects them to theirpractice.omni-rota.com where Iris takes over.
-
-For today I'd do Option A — change the button href to https://flourish.omni-rota.com just to get Emily live and test the full flow. Once it works you build Option B properly.
-
-Want me to update the button href and give you a new index.html?
-
-Oh I wnat to do a proper jib- i wnat prima luce to feel liek rpoper onboarding (minus payment!). Also, a few bits- irsi needs to check who is setting it up pratcie manager or owner. It must not give a PM owners rights and owners must know that. Also- some pratcies will have people straing at 7:45 for an 8 clinic and fiish at 5:30 while clinic finishs at 5. iris needs to knwow to check these facts. I will depoly index now
-
-20:21
-
-Architected proper onboarding flow with role-based access and working hours capture
-Architected proper onboarding flow with role-based access and working hours capture
-Love it. Let me think through this properly before building.
-
-Three things to build:
-
-1. Prima-luce proper onboarding flow Clicking "Get started" opens a clean signup modal (Stripe-quality, dark electric):
-
-Step 1: Your name + email + role (Principal / Practice Manager) + practice name
-Auto-generates their subdomain slug as they type (e.g. "Flourish Dental" → flourish.omni-rota.com)
-Step 2: Confirmation screen showing their URL
-Redirects them to {slug}.omni-rota.com?name=Emily&role=principal passing the info so Iris can greet them by name
-2. Iris — role enforcement
-
-Asks upfront: principal or PM?
-If PM: Iris explicitly says "you'll have manager access — your principal will have full admin rights and can adjust your permissions"
-If principal: full setup, they own the practice on the system
-Writes role correctly into the profile so the app enforces it from day one
-3. Iris — working hours awareness
-
-Asks: when do staff arrive vs when does clinic start? (e.g. nurses in at 7:45, clinic opens 8:00)
-Asks: when do staff finish vs last patient? (e.g. staff contracted to 5:30, clinic ends 5:00)
-Stores staffStartOffset and staffFinishOffset in practice profile
-Rota engine uses these for shift display
-Which file is which:
-
-index.html — signup modal (prima-luce)
-PART2 — Iris system prompt update + URL param greeting
-Shall I crack on with both now? And what's the Supabase anon key — I'll need it to write the practice row from the landing page, or I can skip that and just redirect (Iris handles the Supabase write at the end anyway).
-
-yeah ask Asks: when do staff arrive vs when does clinic start? (e.g. nurses in at 7:45, clinic opens 8:00)
-* Asks: when do staff finish vs last patient? (e.g. staff contracted to 5:30, clinic ends 5:00 and check when they are paid from....lets build
-
-20:26
-
-Thinking about staff scheduling timelines and payroll alignment in clinic operations
-Thinking about staff scheduling timelines and payroll alignment in clinic operations
-Let's go. Building both simultaneously — index.html onboarding modal + Iris system prompt update.
-
-
-Check the current index.html get-started section
-Check the current index.html get-started section
-Good, I have the file. Now let me build the full updated index with the onboarding modal, then update Iris's system prompt in Part 2.
-
-
-Edited 2 files
-Edited 2 files
-Now update the Get started button to trigger the modal instead of linking directly:
-
-
-Change get started button to open modal
-Change get started button to open modal
-Now add the modal JS before the closing </script>:
-
-
-Add modal JS before closing script tag
-Add modal JS before closing script tag
-Now update the Iris system prompt in Part 2 to handle URL params and new questions:
-
-
-Update Iris system prompt with role enforcement and working hours questions
-Update Iris system prompt with role enforcement and working hours questions
-Now update the callIris initial call to pass URL params as context:
-
-
-Update initial Iris call to read URL params and greet by name
-Update initial Iris call to read URL params and greet by name
-Now also update the pennyShouldFire routing to pass those URL params through to PennyOnboarding:
-
-
-Viewed 2 files
-Viewed 2 files
-Now copy both files to outputs:
-
-
-Ran a command, read a file
-Ran a command, read a file
-Both ready. Here's what the full flow now does:
-
-Prima-luce → "Get started with Iris":
-
-Opens a dark electric modal (not a page redirect)
-Step 1: Name, email, practice name, role selector (Principal / Practice Manager)
-Practice manager gets an amber warning inline: "Your principal will hold owner-level settings — they'll need their own account"
-Slug auto-generates as they type the practice name → shows live preview flourish.omni-rota.com
-Step 2: Confirms their URL and role, PM warning shown again
-Launches → redirects to {slug}.omni-rota.com?name=Emily&role=principal&practice=Flourish+Dental&new=1
-Iris picks up the baton:
-
-Reads the URL params, greets Emily by name, skips the "who are you" question
-Role enforcement: PMs told clearly what they can/can't do
-Working hours — asks as one natural conversational block: staff arrival vs clinic start, clinic end vs contracted finish, and crucially paid from when (arrival or clinic start)
-All stored in practiceProfile as staffArrival, clinicStart, clinicEnd, staffFinish, paidFrom
-Deploy: index.html → pulse-landing repo, PART2_iris → src/App.js Part 2 as before. Use the Part 1 fixed from earlier unchanged.
-
-Index
-Code · HTML 
-Omnirota v10 0 0 part2 iris
-JS 
-Screenshot 2026-03-29 at 20.30.32.png
-error in index
-
-20:30
-
-Diagnosed syntax error and investigated file closure
-Diagnosed syntax error and investigated file closure
-"Unexpected end of input" — missing closing brace in the JS. Let me check the end of the file.
-
-
-Investigated script closure and function integration issues
-Investigated script closure and function integration issues
-File looks complete at the end. Let me check the palAnim function where the original } was replaced:
-
-
-Viewed 2 files
-Viewed 2 files
-Found it — the palAnim function is missing its closing } on line 1029. The modal JS got appended without closing palAnim first.
-
-
-Edited a file, ran a command, read a file
-Edited a file, ran a command, read a file
-Fixed — missing } closing the palAnim function. Drop this in and it should be clean.
-
-Index
-Code · HTML 
-Could you repost part 1 omni rota too?
-
-20:31
-
-Thinking about locating and reposting Part 1 of Omni Rota content
-Thinking about locating and reposting Part 1 of Omni Rota content
-There you go. Reminder — paste order: Part 1 first, then Part 2 iris, save once.
-
-Omnirota v10 0 0 part1 fixed
-JS 
-
-
-
-
-
-
-Claude is AI and can make mistakes. Please double-check responses.
-Index · HTML
-Copy
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -592,8 +13,8 @@ Copy
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scrollbar-width: none; scroll-behavior: smooth; background: #07060a; }
     ::-webkit-scrollbar { display: none; }
-    body { background: #07060a; min-height: 100vh; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
- 
+    body { background: #07060a; min-height: 100vh; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; opacity: 0; transition: opacity 0.15s; }
+
     /* ── TOKENS ── */
     :root {
       --bg:      #07060a;
@@ -607,7 +28,7 @@ Copy
       --serif:   'Instrument Serif', Georgia, serif;
       --sans:    'Instrument Sans', system-ui, -apple-system, sans-serif;
     }
- 
+
     /* ── KEYFRAMES ── */
     @keyframes shake   { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
     @keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
@@ -615,7 +36,7 @@ Copy
     @keyframes bob     { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
     @keyframes blink   { 0%,100%{opacity:1} 50%{opacity:0} }
     @keyframes irisGlow { 0%,100%{box-shadow:0 0 10px rgba(58,173,152,0.3)} 50%{box-shadow:0 0 22px rgba(58,173,152,0.65)} }
- 
+
     /* ── EYE LAYER ── */
     #eyeLayer {
       position: fixed; inset: 0; z-index: 1;
@@ -629,7 +50,7 @@ Copy
       content: ''; position: absolute; inset: 0;
       background: linear-gradient(to bottom, rgba(7,6,10,0.25) 0%, rgba(7,6,10,0.5) 50%, rgba(7,6,10,0.88) 100%);
     }
- 
+
     /* ── STORY LAYER ── */
     #storyLayer {
       position: fixed; inset: 0; z-index: 2;
@@ -689,7 +110,7 @@ Copy
       font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
       color: rgba(255,255,255,0.35);
     }
- 
+
     /* ── GATE ── */
     #gate {
       position: fixed; inset: 0; z-index: 100;
@@ -719,11 +140,11 @@ Copy
     #gb:hover { background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.75); }
     #gm { font-size: 10px; color: rgba(210,70,70,0.85); min-height: 14px; margin-top: 8px;
           font-family: var(--sans); text-align: center; }
- 
+
     /* ── APP ── */
     #app { opacity: 0; transition: opacity 0.8s ease; position: relative; z-index: 3; display: none; }
     #app.on { opacity: 1; }
- 
+
     /* ── CONTENT SECTIONS ── */
     .tag {
       font-family: var(--sans); font-size: 10px; font-weight: 600;
@@ -737,7 +158,7 @@ Copy
     .line.it    { font-style: italic; }
     .line.tl    { color: var(--teal); }
     .line.dim   { color: var(--dim); }
- 
+
     /* ── MID CTA ── */
     .mid-cta { max-width: 600px; margin: 72px auto 0; padding: 0 28px; }
     .cta-box {
@@ -750,7 +171,7 @@ Copy
     .cta-box.on { opacity: 1; transform: none; }
     .cta-h { font-family: var(--serif); font-style: italic; font-weight: 700; font-size: clamp(20px, 4vw, 28px); color: rgba(255,255,255,0.88); letter-spacing: -0.02em; margin-bottom: 8px; }
     .cta-p { font-family: var(--sans); font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.65; margin-bottom: 24px; }
- 
+
     /* ── FORMS ── */
     .sf { display: flex; flex-direction: column; gap: 8px; }
     .sf-row { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -777,7 +198,7 @@ Copy
     }
     .ok    { font-family: var(--serif); font-style: italic; font-weight: 700; font-size: 22px; color: var(--teal); padding: 4px 0; }
     .ok-p  { font-family: var(--sans); font-size: 12px; color: var(--dim); margin-top: 6px; line-height: 1.6; }
- 
+
     /* ── COMMAND PALETTE ── */
     .pal-section { max-width: 600px; margin: 80px auto 0; padding: 0 28px; }
     .pal-wrap {
@@ -834,7 +255,7 @@ Copy
     .pal-st.done { color: var(--teal-lt); }
     .pal-hints { display: flex; gap: 12px; }
     .pal-hint  { font-size: 9px; color: rgba(255,255,255,0.15); }
- 
+
     /* ── FEATURE BAND ── */
     .band { background: rgba(255,255,255,0.03); margin-top: 72px; padding: 72px 28px 80px; border-top: 1px solid rgba(255,255,255,0.06); }
     .band-in { max-width: 600px; margin: 0 auto; }
@@ -857,7 +278,7 @@ Copy
     .fc-ico { margin-bottom: 16px; opacity: 0.4; }
     .fc-b { font-family: var(--sans); font-size: 13.5px; font-weight: 700; color: rgba(255,255,255,0.88); }
     .fc-s { font-family: var(--sans); font-size: 13.5px; color: rgba(255,255,255,0.3); }
- 
+
     /* ── CREDIBILITY ── */
     .cred { max-width: 860px; margin: 80px auto 0; padding: 0 28px; }
     .cred-in {
@@ -873,7 +294,7 @@ Copy
       border-left: 3px solid var(--teal); padding-left: 28px;
     }
     .cred-a { font-family: var(--sans); font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; padding-left: 28px; }
- 
+
     /* ── IRIS CARD ── */
     .iris-section { max-width: 600px; margin: 48px auto 0; padding: 0 28px; }
     .iris-card {
@@ -915,7 +336,7 @@ Copy
       width: 5px; height: 5px; border-radius: 50%; background: var(--teal-lt);
       animation: irisGlow 2s ease-in-out infinite;
     }
- 
+
     /* ── GET STARTED BUTTON ── */
     .get-started-wrap {
       max-width: 600px; margin: 40px auto 0; padding: 0 28px;
@@ -944,7 +365,7 @@ Copy
       color: rgba(255,255,255,0.28); margin-top: 10px;
       letter-spacing: 0.04em;
     }
- 
+
     /* ── PRICING ── */
     .pricing {
       max-width: 600px; margin: 56px auto 0; padding: 0 28px;
@@ -954,7 +375,7 @@ Copy
     .pricing.on { opacity: 1; transform: none; }
     .pl { flex: 1; height: 1px; background: var(--faint); }
     .pt { font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); white-space: nowrap; }
- 
+
     /* ── FINAL CTA ── */
     .final { max-width: 600px; margin: 56px auto 0; padding: 0 28px 100px; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 64px; }
     .final-mark {
@@ -981,7 +402,7 @@ Copy
       opacity: 0; transform: translateX(-14px); transition: opacity 0.4s 0.21s, transform 0.4s 0.21s;
     }
     .final-f.on { opacity: 1; transform: none; }
- 
+
     /* ── FOOTER ── */
     footer {
       background: transparent; padding: 28px;
@@ -990,7 +411,7 @@ Copy
     .ft-l { display: flex; align-items: center; gap: 9px; }
     .ft-w { font-family: var(--serif); font-weight: 700; font-size: 15px; color: rgba(255,255,255,0.65); letter-spacing: -0.02em; }
     .ft-r { font-family: var(--sans); font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 0.1em; text-transform: uppercase; }
- 
+
     /* ── ONBOARDING MODAL ── */
     #obOverlay {
       position: fixed; inset: 0; z-index: 200;
@@ -1122,16 +543,16 @@ Copy
     }
   </style>
 </head>
- 
+
 <body>
- 
+
 <!-- EYE: always in DOM, opacity controlled by JS -->
 <div id="eyeLayer">
   <video autoplay muted playsinline loop preload="auto">
     <source src="eye.mp4" type="video/mp4">
   </video>
 </div>
- 
+
 <!-- STORY: hidden/shown via JS style.display -->
 <div id="storyLayer">
   <div id="iLines"></div>
@@ -1140,7 +561,7 @@ Copy
     <span id="iWordSub">Always present &middot; Built for dental</span>
   </div>
 </div>
- 
+
 <!-- GATE: password screen -->
 <div id="gate">
   <div id="gInner">
@@ -1150,11 +571,11 @@ Copy
   </div>
   <p id="gm"></p>
 </div>
- 
+
 <div id="app">
- 
+
   <div style="height: 20px;"></div>
- 
+
   <!-- COMMAND PALETTE SECTION -->
   <div class="pal-section">
     <p class="tag" data-tag style="max-width:600px;margin:0 auto 22px;">Three keystrokes. Nurse found. Shift covered.</p>
@@ -1207,57 +628,57 @@ Copy
       </div>
     </div>
   </div>
- 
+
   <!-- FEATURE DARK BAND -->
   <div class="band">
     <div class="band-in">
       <p class="band-tag" data-bandtag>Everything your practice needs. Always.</p>
       <div class="f-grid">
- 
+
         <div class="fc" data-fc style="transition-delay:0s">
           <div class="fc-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="4" width="18" height="15" rx="2" stroke="white" stroke-width="1.5"/><path d="M7 2v4M15 2v4M2 9h18" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 13h4M6 17h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
           <span class="fc-b">Rota. </span><span class="fc-s">Live shifts. Every site, every day.</span>
         </div>
- 
+
         <div class="fc" data-fc style="transition-delay:0.06s">
           <div class="fc-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="8" r="4" stroke="white" stroke-width="1.5"/><path d="M2 19c0-3.314 2.686-6 6-6" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M14 14l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <span class="fc-b">AI Cover. </span><span class="fc-s">Sick nurse at 7am? Covered by 7:03.</span>
         </div>
- 
+
         <div class="fc" data-fc style="transition-delay:0.12s">
           <div class="fc-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 17l5-6 4 3 5-8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="6" r="2" stroke="white" stroke-width="1.5"/></svg></div>
           <span class="fc-b">Bradford. </span><span class="fc-s">Sickness patterns. Signal, not verdict.</span>
         </div>
- 
+
         <div class="fc" data-fc style="transition-delay:0.18s">
           <div class="fc-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3v4M11 15v4M3 11h4M15 11h4" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="11" r="4" stroke="white" stroke-width="1.5"/></svg></div>
           <span class="fc-b">RTW. </span><span class="fc-s">Return to work. Nothing missed.</span>
         </div>
- 
+
         <div class="fc" data-fc style="transition-delay:0.24s">
           <div class="fc-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="2" stroke="white" stroke-width="1.5"/><path d="M7 11h8M11 7v8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
           <span class="fc-b">Locum log. </span><span class="fc-s">Agency audit trail. Built in.</span>
         </div>
- 
+
         <div class="fc" data-fc style="transition-delay:0.30s">
           <div class="fc-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L4 5v6c0 4.418 3.134 8.552 7 9.898C15.866 19.552 19 15.418 19 11V5l-7-3z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 11l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <span class="fc-b">Compliance. </span><span class="fc-s">CQC evidence. Logged automatically.</span>
         </div>
- 
+
         <div class="fc" data-fc style="transition-delay:0.36s">
           <div class="fc-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="4" width="14" height="10" rx="1" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 14v4M14 14v4M6 18h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 9l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <span class="fc-b">CPD. </span><span class="fc-s">Development tracked. Staff grow.</span>
         </div>
- 
+
         <div class="fc" data-fc style="transition-delay:0.42s">
           <div class="fc-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="3" stroke="white" stroke-width="1.5"/><path d="M11 2v3M11 17v3M2 11h3M17 11h3" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4.93 4.93l2.12 2.12M14.95 14.95l2.12 2.12M4.93 17.07l2.12-2.12M14.95 7.05l2.12-2.12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
           <span class="fc-b">Insights. </span><span class="fc-s">Patterns you'd never spot yourself.</span>
         </div>
- 
+
       </div>
     </div>
   </div>
- 
+
   <!-- CREDIBILITY -->
   <div class="cred">
     <div class="cred-in" data-cred>
@@ -1265,7 +686,7 @@ Copy
       <p class="cred-a">Built by Conor O&#8217;Neill &amp; Emily Chapman &mdash; dentists, principals, practice owners.</p>
     </div>
   </div>
- 
+
   <!-- IRIS CARD -->
   <div class="iris-section">
     <div class="iris-card" data-box>
@@ -1280,7 +701,7 @@ Copy
       </div>
     </div>
   </div>
- 
+
   <!-- GET STARTED -->
   <div class="get-started-wrap" data-getstarted>
     <a href="#" class="get-started" onclick="obOpen(event)">
@@ -1291,14 +712,14 @@ Copy
     </a>
     <p class="get-started-sub">Takes about 3 minutes &middot; No card required</p>
   </div>
- 
+
   <!-- PRICING -->
   <div class="pricing" data-pricing>
     <div class="pl"></div>
     <span class="pt">From £79 / month &middot; Cancel any time</span>
     <div class="pl"></div>
   </div>
- 
+
   <!-- FINAL CTA -->
   <section class="final">
     <div class="final-mark" data-final>
@@ -1328,7 +749,7 @@ Copy
       </div>
     </div>
   </section>
- 
+
   <!-- FOOTER -->
   <footer>
     <div class="ft-l">
@@ -1336,18 +757,16 @@ Copy
     </div>
     <span class="ft-r">© 2026 Prima Luce Ltd &nbsp;·&nbsp; omni.dental</span>
   </footer>
- 
-</div><!-- /app -->
- 
-<!-- ONBOARDING MODAL -->
-<div id="obOverlay">
+
+  <!-- ONBOARDING MODAL — inside #app so it's behind the password gate -->
+  <div id="obOverlay">
   <div id="obBox">
     <div id="obHead">
       <span class="ob-wordmark">Omni<span style="color:#3aad98;">.</span></span>
       <button class="ob-close" onclick="obClose()">✕</button>
     </div>
     <div id="obBody">
- 
+
       <!-- Step 1: About you -->
       <div class="ob-step on" id="obStep1">
         <div class="ob-dots">
@@ -1394,7 +813,7 @@ Copy
         </button>
         <div style="font-family:var(--sans);font-size:10px;color:rgba(255,255,255,0.18);text-align:center;margin-top:12px;letter-spacing:0.06em;">No card required &middot; Cancel any time</div>
       </div>
- 
+
       <!-- Step 2: Confirm -->
       <div class="ob-step" id="obStep2">
         <div class="ob-dots">
@@ -1414,15 +833,20 @@ Copy
         </button>
         <button class="ob-back" onclick="obBack()">← Back</button>
       </div>
- 
+
     </div>
   </div>
-</div>
- 
+</div><!-- /obOverlay -->
+
+</div><!-- /app -->
+
 <script>
 const PASS = "pulse2026";
 const app  = document.getElementById('app');
- 
+
+// Reveal body now that gate is ready — prevents flash of unstyled content
+document.body.style.opacity = '1';
+
 function showApp() {
   const story = document.getElementById('storyLayer');
   story.style.transition = 'opacity 0.9s ease';
@@ -1434,7 +858,7 @@ function showApp() {
     boot();
   }));
 }
- 
+
 const STORY = [
   { text: "Monday · 07:45",                      cls: "tag-style",  delay: 1000  },
   { text: "It's 7:45.",                           cls: "",           delay: 2200  },
@@ -1449,7 +873,7 @@ const STORY = [
   { text: "Everyone looks to you for an answer.", cls: "big-style",  delay: 12000 },
   { text: "You look to Omni.",                    cls: "big-style",  delay: 13200 },
 ];
- 
+
 function runStory(cb) {
   const container = document.getElementById('iLines');
   if (!container) { cb(); return; }
@@ -1479,7 +903,7 @@ function runStory(cb) {
     }, 900);
   }, lastDelay + 2200);
 }
- 
+
 function runIntro() {
   const eye   = document.getElementById('eyeLayer');
   const vid   = document.querySelector('#eyeLayer video');
@@ -1489,7 +913,7 @@ function runIntro() {
   if (vid) vid.play().catch(() => {});
   runStory(showApp);
 }
- 
+
 function tryPass() {
   const inp = document.getElementById('gi');
   const msg = document.getElementById('gm');
@@ -1508,12 +932,12 @@ function tryPass() {
     inp.value = ''; inp.focus();
   }
 }
- 
+
 if (sessionStorage.getItem('pu')) {
   document.getElementById('gate').style.display = 'none';
   setTimeout(runIntro, 100);
 }
- 
+
 document.addEventListener('DOMContentLoaded', () => {
   const inp = document.getElementById('gi');
   if (inp) {
@@ -1521,7 +945,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') tryPass(); });
   }
 });
- 
+
 function signup(e, src) {
   e.preventDefault();
   const form = e.target;
@@ -1532,7 +956,7 @@ function signup(e, src) {
     wrap.innerHTML = '<p class="ok">You\'re on the list.</p><p class="ok-p">We\'ll be in touch when early access opens. Keep an eye on your inbox.</p>';
   }
 }
- 
+
 function boot() {
   const show = (sel, delay) => {
     document.querySelectorAll(sel).forEach((el, i) => {
@@ -1548,7 +972,7 @@ function boot() {
   show('[data-getstarted]', 280);
   show('[data-pricing]',    320);
   show('[data-final]',      360);
- 
+
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
@@ -1556,10 +980,10 @@ function boot() {
     document.querySelectorAll('[data-fc],[data-pal],[data-cred],[data-box],[data-getstarted],[data-pricing],[data-final]')
       .forEach(el => io.observe(el));
   }
- 
+
   palAnim();
 }
- 
+
 function palAnim() {
   const q = document.getElementById('pq');
   if (!q) return;
@@ -1569,7 +993,7 @@ function palAnim() {
   const cur     = q.querySelector('.pal-cur');
   const queries = ['Find cover for Savanna Butler…', 'Who can do MOS today?', 'Check Brooklands staffing…'];
   let qi = 0;
- 
+
   function typeQuery(str, cb) {
     if (ph) ph.style.display = 'none';
     let i = 0;
@@ -1580,14 +1004,14 @@ function palAnim() {
       if (i >= str.length) { clearInterval(t); setTimeout(() => cb(node), 700); }
     }, 50);
   }
- 
+
   function clearQuery(node, cb) {
     const t = setInterval(() => {
       if (!node.textContent.length) { clearInterval(t); cb(); return; }
       node.textContent = node.textContent.slice(0, -1);
     }, 22);
   }
- 
+
   function cycle() {
     if (!document.getElementById('pq')) return;
     const str = queries[qi++ % queries.length];
@@ -1606,27 +1030,27 @@ function palAnim() {
   }
   setTimeout(cycle, 1200);
 }
- 
+
 // ── ONBOARDING MODAL ──────────────────────────────────────────────────────
 let obRole = '';
- 
+
 function obOpen(e) {
   if (e) e.preventDefault();
   document.getElementById('obOverlay').classList.add('on');
   setTimeout(() => document.getElementById('obName')?.focus(), 100);
 }
- 
+
 function obClose() {
   document.getElementById('obOverlay').classList.remove('on');
 }
- 
+
 function selectRole(role) {
   obRole = role;
   document.getElementById('obRolePrincipal').classList.toggle('sel', role === 'principal');
   document.getElementById('obRolePM').classList.toggle('sel', role === 'manager');
   document.getElementById('obPmWarn').style.display = role === 'manager' ? 'block' : 'none';
 }
- 
+
 function updateSlug() {
   const val = document.getElementById('obPractice')?.value || '';
   const slug = val.toLowerCase()
@@ -1637,12 +1061,12 @@ function updateSlug() {
     .slice(0, 32) || 'your-practice';
   document.getElementById('obSlugVal').textContent = slug;
 }
- 
+
 function obNext() {
   const name     = document.getElementById('obName')?.value.trim();
   const email    = document.getElementById('obEmail')?.value.trim();
   const practice = document.getElementById('obPractice')?.value.trim();
- 
+
   // Validate
   let err = false;
   ['obName','obEmail','obPractice'].forEach(id => {
@@ -1655,33 +1079,33 @@ function obNext() {
     return;
   }
   if (err) return;
- 
+
   // Build confirm screen
   const slug = document.getElementById('obSlugVal').textContent;
   document.getElementById('obConfirmUrl').textContent = `${slug}.omni-rota.com`;
   document.getElementById('obConfirmRole').textContent =
     obRole === 'principal' ? `Setting up as Principal · ${name}` : `Setting up as Practice Manager · ${name}`;
   document.getElementById('obConfirmPmNote').style.display = obRole === 'manager' ? 'block' : 'none';
- 
+
   document.getElementById('obStep1').classList.remove('on');
   document.getElementById('obStep2').classList.add('on');
 }
- 
+
 function obBack() {
   document.getElementById('obStep2').classList.remove('on');
   document.getElementById('obStep1').classList.add('on');
 }
- 
+
 function obLaunch() {
   const name     = document.getElementById('obName')?.value.trim();
   const email    = document.getElementById('obEmail')?.value.trim();
   const practice = document.getElementById('obPractice')?.value.trim();
   const slug     = document.getElementById('obSlugVal').textContent;
- 
+
   const btn = document.getElementById('obLaunchBtn');
   btn.disabled = true;
   btn.textContent = 'Launching…';
- 
+
   // Pass name, email, role, practice as URL params so Iris can greet them
   const params = new URLSearchParams({
     name:     name,
@@ -1690,23 +1114,22 @@ function obLaunch() {
     practice: practice,
     new:      '1',
   });
- 
+
   setTimeout(() => {
     window.location.href = `https://${slug}.omni-rota.com?${params.toString()}`;
   }, 600);
 }
- 
+
 // Close on overlay click
 document.getElementById('obOverlay')?.addEventListener('click', function(e) {
   if (e.target === this) obClose();
 });
- 
+
 // Close on Escape
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') obClose();
 });
 </script>
- 
+
 </body>
 </html>
- 
