@@ -35,6 +35,7 @@
     @keyframes scaleIn { from{opacity:0;transform:scale(0.86)} to{opacity:1;transform:scale(1)} }
     @keyframes bob     { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
     @keyframes blink   { 0%,100%{opacity:1} 50%{opacity:0} }
+    @keyframes irisGlow { 0%,100%{box-shadow:0 0 10px rgba(58,173,152,0.3)} 50%{box-shadow:0 0 22px rgba(58,173,152,0.65)} }
 
     /* ── EYE LAYER ── */
     #eyeLayer {
@@ -193,7 +194,7 @@
     .fb:active { transform: scale(0.98); }
     .fn {
       font-family: var(--sans); font-size: 9.5px;
-      color: rgba(26,25,23,0.22); letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.22); letter-spacing: 0.1em; text-transform: uppercase;
     }
     .ok    { font-family: var(--serif); font-style: italic; font-weight: 700; font-size: 22px; color: var(--teal); padding: 4px 0; }
     .ok-p  { font-family: var(--sans); font-size: 12px; color: var(--dim); margin-top: 6px; line-height: 1.6; }
@@ -294,20 +295,76 @@
     }
     .cred-a { font-family: var(--sans); font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; padding-left: 28px; }
 
-    /* ── PENNY ── */
-    .penny { max-width: 600px; margin: 48px auto 0; padding: 0 28px; }
-    .penny-card {
-      background: rgba(42,125,110,0.06);
-      border: 1px solid rgba(42,125,110,0.14);
-      border-radius: 12px; padding: 24px;
+    /* ── IRIS CARD ── */
+    .iris-section { max-width: 600px; margin: 48px auto 0; padding: 0 28px; }
+    .iris-card {
+      background: rgba(58,173,152,0.05);
+      border: 1px solid rgba(58,173,152,0.15);
+      border-radius: 14px; padding: 28px 24px;
       display: flex; gap: 18px; align-items: flex-start;
       opacity: 0; transform: translateY(10px);
       transition: opacity 0.5s, transform 0.5s;
     }
-    .penny-card.on { opacity: 1; transform: none; }
-    .penny-logo { flex-shrink: 0; margin-top: 2px; }
-    .penny-h { font-family: var(--serif); font-weight: 700; font-size: 16px; color: rgba(255,255,255,0.95); letter-spacing: -0.015em; margin-bottom: 6px; }
-    .penny-p { font-family: var(--sans); font-size: 12.5px; color: rgba(255,255,255,0.6); line-height: 1.65; }
+    .iris-card.on { opacity: 1; transform: none; }
+    .iris-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #00d4ff, #a855f7, #f472b6);
+      flex-shrink: 0; margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-style: italic; font-weight: 700;
+      font-size: 16px; color: white;
+      animation: irisGlow 3s ease-in-out infinite;
+    }
+    .iris-h {
+      font-family: var(--serif); font-style: italic; font-weight: 700;
+      font-size: 18px; color: rgba(255,255,255,0.95);
+      letter-spacing: -0.015em; margin-bottom: 6px;
+    }
+    .iris-p {
+      font-family: var(--sans); font-size: 13px;
+      color: rgba(255,255,255,0.55); line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .iris-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(58,173,152,0.1); border: 1px solid rgba(58,173,152,0.2);
+      border-radius: 20px; padding: 4px 10px;
+      font-family: var(--sans); font-size: 10px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal-lt);
+    }
+    .iris-dot {
+      width: 5px; height: 5px; border-radius: 50%; background: var(--teal-lt);
+      animation: irisGlow 2s ease-in-out infinite;
+    }
+
+    /* ── GET STARTED BUTTON ── */
+    .get-started-wrap {
+      max-width: 600px; margin: 40px auto 0; padding: 0 28px;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.4s 0.1s, transform 0.4s 0.1s;
+    }
+    .get-started-wrap.on { opacity: 1; transform: none; }
+    .get-started {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 28px; border-radius: 10px; border: none;
+      background: var(--teal-lt); color: #fff;
+      font-family: var(--serif); font-style: italic; font-weight: 700;
+      font-size: 17px; letter-spacing: -0.01em;
+      cursor: pointer; text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(58,173,152,0.25);
+    }
+    .get-started:hover {
+      background: #2a7d6e;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 32px rgba(58,173,152,0.35);
+    }
+    .get-started:active { transform: scale(0.98); }
+    .get-started-sub {
+      font-family: var(--sans); font-size: 11px;
+      color: rgba(255,255,255,0.28); margin-top: 10px;
+      letter-spacing: 0.04em;
+    }
 
     /* ── PRICING ── */
     .pricing {
@@ -375,8 +432,6 @@
   </div>
 </div>
 
-</div>
-
 <!-- GATE: password screen -->
 <div id="gate">
   <div id="gInner">
@@ -386,9 +441,11 @@
   </div>
   <p id="gm"></p>
 </div>
+
 <div id="app">
 
   <div style="height: 20px;"></div>
+
   <!-- COMMAND PALETTE SECTION -->
   <div class="pal-section">
     <p class="tag" data-tag style="max-width:600px;margin:0 auto 22px;">Three keystrokes. Nurse found. Shift covered.</p>
@@ -500,14 +557,30 @@
     </div>
   </div>
 
-  <!-- PENNY -->
-  <div class="penny">
-    <div class="penny-card" data-box>
+  <!-- IRIS CARD -->
+  <div class="iris-section">
+    <div class="iris-card" data-box>
+      <div class="iris-avatar">I</div>
       <div>
-        <p class="penny-h">Meet Penny. Your setup guide.</p>
-        <p class="penny-p">One short conversation. She learns your practice — sites, surgeries, staff headcount. Your rota is live before you've finished your coffee. No call. No consultant. No implementation fee.</p>
+        <p class="iris-h">Meet Iris. Your setup guide.</p>
+        <p class="iris-p">One short conversation. She learns your practice — sites, surgeries, staff headcount. Your rota is live before you've finished your coffee. No call. No consultant. No implementation fee.</p>
+        <div class="iris-badge">
+          <div class="iris-dot"></div>
+          Owners and Managers Need Iris
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- GET STARTED -->
+  <div class="get-started-wrap" data-getstarted>
+    <a href="https://omni-rota.com" class="get-started">
+      Get started with Iris
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <p class="get-started-sub">Takes about 3 minutes &middot; No card required</p>
   </div>
 
   <!-- PRICING -->
@@ -519,6 +592,9 @@
 
   <!-- FINAL CTA -->
   <section class="final">
+    <div class="final-mark" data-final>
+      <div>
+        <div class="final-w">Omni<span style="color:#3aad98;">.</span></div>
         <div class="final-sw">Early access &middot; UK dental practices</div>
       </div>
     </div>
@@ -532,7 +608,7 @@
       <div id="ff">
         <form class="sf" onsubmit="signup(event,'f')">
           <div class="sf-row">
-            <input class="fi" type="text"  name="pname" placeholder="Practice name" required autocomplete="organization">
+            <input class="fi" type="text" name="pname" placeholder="Practice name" required autocomplete="organization">
           </div>
           <div class="sf-row">
             <input class="fi" type="email" name="email" placeholder="your@practice.com" required autocomplete="email">
@@ -546,7 +622,8 @@
 
   <!-- FOOTER -->
   <footer>
-    <div class="ft-l"><span class="ft-w">Omni<span style="color:#3aad98;">.</span></span>
+    <div class="ft-l">
+      <span class="ft-w">Omni<span style="color:#3aad98;">.</span></span>
     </div>
     <span class="ft-r">© 2026 Prima Luce Ltd &nbsp;·&nbsp; omni.dental</span>
   </footer>
@@ -557,13 +634,11 @@
 const PASS = "pulse2026";
 const app  = document.getElementById('app');
 
-// ── Stage 3: fade out story, show page ──────────────────────────────────────
 function showApp() {
   const story = document.getElementById('storyLayer');
   story.style.transition = 'opacity 0.9s ease';
   story.style.opacity = '0';
   setTimeout(() => { story.style.display = 'none'; }, 900);
-
   app.style.display = 'block';
   requestAnimationFrame(() => requestAnimationFrame(() => {
     app.classList.add('on');
@@ -571,10 +646,9 @@ function showApp() {
   }));
 }
 
-// ── Story: each line appears and STAYS, building up like thoughts ────────────
 const STORY = [
   { text: "Monday · 07:45",                      cls: "tag-style",  delay: 1000  },
-  { text: "It’s 7:45.",                           cls: "",           delay: 2200  },
+  { text: "It's 7:45.",                           cls: "",           delay: 2200  },
   { text: "Still in the car.",                    cls: "",           delay: 3400  },
   { text: "Rain hammering down.",                 cls: "",           delay: 4600  },
   { text: "Traffic at a standstill.",             cls: "",           delay: 5800  },
@@ -582,34 +656,27 @@ const STORY = [
   { text: "Nurse off sick.",                      cls: "",           delay: 7900  },
   { text: "Another message.",                     cls: "",           delay: 8700  },
   { text: "Surgery 2 down.",                      cls: "",           delay: 9500  },
-  { text: "You’re not even in yet.",              cls: "",           delay: 10600 },
+  { text: "You're not even in yet.",              cls: "",           delay: 10600 },
   { text: "Everyone looks to you for an answer.", cls: "big-style",  delay: 12000 },
-  { text: "You look to Omni.",                   cls: "big-style",  delay: 13200 },
+  { text: "You look to Omni.",                    cls: "big-style",  delay: 13200 },
 ];
 
 function runStory(cb) {
   const container = document.getElementById('iLines');
   if (!container) { cb(); return; }
-
   STORY.forEach(({ text, cls, delay }) => {
     setTimeout(() => {
       const span = document.createElement('span');
       span.className = 'sLine' + (cls ? ' ' + cls : '');
       span.textContent = text;
       container.appendChild(span);
-      // Trigger fade-in on next frame
       requestAnimationFrame(() => requestAnimationFrame(() => span.classList.add('on')));
     }, delay);
   });
-
-  // After last line + pause, show wordmark then call cb
   const lastDelay = STORY[STORY.length - 1].delay;
   setTimeout(() => {
-    // Fade all lines out together
     container.style.transition = 'opacity 0.8s ease';
     container.style.opacity = '0';
-
-    // Show Pulse wordmark
     setTimeout(() => {
       container.style.display = 'none';
       const wmark = document.getElementById('iWordmark');
@@ -619,7 +686,6 @@ function runStory(cb) {
         wmark.style.transition = 'opacity 1.2s ease';
         requestAnimationFrame(() => requestAnimationFrame(() => wmark.style.opacity = '1'));
       }
-      // Hold wordmark 3s then go to page
       setTimeout(cb, 3000);
     }, 900);
   }, lastDelay + 2200);
@@ -629,17 +695,9 @@ function runIntro() {
   const eye   = document.getElementById('eyeLayer');
   const vid   = document.querySelector('#eyeLayer video');
   const story = document.getElementById('storyLayer');
-
-  // Fade in eye video
   eye.style.opacity = '1';
-
-  // Show story overlay — flex column, centred
   story.style.cssText = 'position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;';
-
-  // Play video
   if (vid) vid.play().catch(() => {});
-
-  // Run accumulating story then show app
   runStory(showApp);
 }
 
@@ -662,7 +720,6 @@ function tryPass() {
   }
 }
 
-// Returning visitors — skip gate, still play story
 if (sessionStorage.getItem('pu')) {
   document.getElementById('gate').style.display = 'none';
   setTimeout(runIntro, 100);
@@ -676,30 +733,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+function signup(e, src) {
+  e.preventDefault();
+  const form = e.target;
+  const pname = form.pname?.value || '';
+  const email = form.email?.value || '';
+  const wrap = document.getElementById('ff');
+  if (wrap) {
+    wrap.innerHTML = '<p class="ok">You\'re on the list.</p><p class="ok-p">We\'ll be in touch when early access opens. Keep an eye on your inbox.</p>';
+  }
+}
+
 function boot() {
   const show = (sel, delay) => {
     document.querySelectorAll(sel).forEach((el, i) => {
       setTimeout(() => el.classList.add('on'), delay + i * 60);
     });
   };
-  show('[data-fc]',      100);
-  show('[data-pal]',      80);
-  show('[data-tag]',      80);
-  show('[data-bandtag]',  80);
-  show('[data-cred]',    200);
-  show('[data-penny]',   240);
-  show('[data-pricing]', 280);
-  show('[data-final]',   320);
-  show('[data-finalh]',  340);
-  show('[data-finalp]',  360);
-  show('[data-finalf]',  380);
-  show('[data-box]',     200);
+  show('[data-fc]',         100);
+  show('[data-pal]',         80);
+  show('[data-tag]',         80);
+  show('[data-bandtag]',     80);
+  show('[data-cred]',       200);
+  show('[data-box]',        240);
+  show('[data-getstarted]', 280);
+  show('[data-pricing]',    320);
+  show('[data-final]',      360);
 
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
     }, { threshold: 0.08 });
-    document.querySelectorAll('[data-fc],[data-pal],[data-cred],[data-penny],[data-pricing],[data-final],[data-finalh],[data-finalp],[data-finalf]')
+    document.querySelectorAll('[data-fc],[data-pal],[data-cred],[data-box],[data-getstarted],[data-pricing],[data-final]')
       .forEach(el => io.observe(el));
   }
 
