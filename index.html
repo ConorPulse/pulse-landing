@@ -272,7 +272,7 @@
     .fc-s { font-family: var(--sans); font-size: 13.5px; color: rgba(255,255,255,0.3); }
 
     /* ── CREDIBILITY ── */
-    .cred { max-width: 600px; margin: 72px auto 0; padding: 0 28px; }
+    .cred { max-width: 860px; margin: 80px auto 0; padding: 0 28px; }
     .cred-in {
       border-left: 2px solid var(--teal); padding-left: 24px;
       opacity: 0; transform: translateX(-12px);
@@ -281,10 +281,11 @@
     .cred-in.on { opacity: 1; transform: none; }
     .cred-q {
       font-family: var(--serif); font-style: italic;
-      font-size: clamp(17px, 3.4vw, 23px);
-      color: var(--ink); line-height: 1.45; letter-spacing: -0.015em; margin-bottom: 14px;
+      font-size: clamp(22px, 4.5vw, 36px);
+      color: var(--ink); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 20px;
+      border-left: 3px solid var(--teal); padding-left: 28px;
     }
-    .cred-a { font-family: var(--sans); font-size: 11px; color: var(--dim); letter-spacing: 0.04em; }
+    .cred-a { font-family: var(--sans); font-size: 11px; color: var(--dim); letter-spacing: 0.04em; padding-left: 28px; }
 
     /* ── PENNY ── */
     .penny { max-width: 600px; margin: 48px auto 0; padding: 0 28px; }
@@ -478,238 +479,88 @@
 <style>
 #gate {
   position: fixed; inset: 0; z-index: 1000;
-  background: #000;
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.8s ease, visibility 0.8s ease;
+  background: #07060a;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
 }
 #gate.out { opacity: 0; visibility: hidden; pointer-events: none; }
 
-/* VIDEO — fullscreen, object-fit cover */
 #gVideo {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 1.2s ease;
+  transition: opacity 1.4s ease;
 }
 #gVideo.on { opacity: 1; }
 
-/* OVERLAY — all text sits here */
-#gOverlay {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* STORY LINES */
-#gStory {
-  text-align: center;
-  padding: 0 24px;
-}
-.gLine {
-  display: block;
-  font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: clamp(13px, 2.2vw, 18px);
-  font-weight: 400;
-  color: rgba(255,255,255,0.88);
-  letter-spacing: 0.02em;
-  line-height: 1.9;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  text-shadow: 0 1px 12px rgba(0,0,0,0.9);
-}
-.gLine.tag {
-  font-size: clamp(10px, 1.4vw, 13px);
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.42);
-  margin-bottom: 6px;
-}
-.gLine.on { opacity: 1; }
-
-/* PULSE wordmark — appears at end */
-#gWordmark {
-  position: absolute;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-}
-#gWordmark.on { opacity: 1; }
-#gWordName {
-  display: block;
-  font-family: 'Instrument Serif', Georgia, serif;
-  font-style: italic; font-weight: 700;
-  font-size: clamp(52px, 10vw, 96px);
-  color: #fff;
-  letter-spacing: -0.03em;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.6);
-  line-height: 1;
-}
-#gWordSub {
-  display: block;
-  margin-top: 10px;
-  font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: clamp(9px, 1.4vw, 12px);
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.4);
-}
-
-/* PASSWORD */
 #gPass {
   position: absolute;
   bottom: min(10vh, 72px);
+  left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center;
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity 1.6s ease;
   pointer-events: none;
+  white-space: nowrap;
 }
 #gPass.on { opacity: 1; pointer-events: all; }
-.gPassLbl {
+
+.gRow { display: flex; gap: 6px; }
+.gIn {
+  width: min(200px, 56vw);
+  padding: 9px 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.65);
   font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: 10px; font-weight: 600;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.3); margin-bottom: 12px;
-}
-.gPassRow { display: flex; gap: 8px; width: min(272px, 78vw); }
-.gPassIn {
-  flex: 1; padding: 11px 14px;
-  border: 1.5px solid rgba(255,255,255,0.15);
-  border-radius: 9px;
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: 13px; letter-spacing: 0.05em;
+  font-size: 13px; letter-spacing: 0.08em;
   outline: none; transition: border-color 0.2s;
-  -webkit-text-fill-color: #fff;
+  -webkit-text-fill-color: rgba(255,255,255,0.65);
 }
-.gPassIn::placeholder { color: rgba(255,255,255,0.25); }
-.gPassIn:focus { border-color: rgba(42,125,110,0.6); }
-.gPassIn.err { border-color: rgba(200,60,60,0.8); animation: shake 0.35s ease; }
-.gPassBtn {
-  padding: 11px 16px; border-radius: 9px; border: none;
-  background: rgba(42,125,110,0.75); color: #fff;
-  font-family: 'Instrument Serif', serif;
-  font-style: italic; font-weight: 700;
+.gIn::placeholder { color: rgba(255,255,255,0.15); letter-spacing: 0.18em; font-size: 11px; }
+.gIn:focus { border-color: rgba(255,255,255,0.22); }
+.gIn.err { border-color: rgba(210,60,60,0.7); animation: gShake 0.35s ease; }
+@keyframes gShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.gBtn {
+  padding: 9px 13px; border-radius: 7px; border: none;
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.4);
   font-size: 14px; cursor: pointer;
-  transition: background 0.2s; white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
 }
-.gPassBtn:hover { background: rgba(58,173,152,0.9); }
-.gPassMsg {
-  font-size: 10px; color: rgba(220,80,80,0.9);
-  min-height: 14px; margin-top: 8px;
-  font-family: 'Instrument Sans', system-ui, sans-serif;
-  letter-spacing: 0.05em;
-}
+.gBtn:hover { background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.75); }
+.gMsg { font-size: 10px; color: rgba(210,70,70,0.85); min-height: 14px; margin-top: 7px;
+  font-family: 'Instrument Sans', system-ui, sans-serif; }
 </style>
 
-<!-- Eye video -->
-<video id="gVideo" autoplay muted playsinline preload="auto">
+<video id="gVideo" autoplay muted playsinline preload="auto" loop>
   <source src="eye.mp4" type="video/mp4">
 </video>
 
-<!-- Text overlay -->
-<div id="gOverlay">
-  <div id="gStory">
-    <span class="gLine tag" data-t="0.6">Monday &middot; 07:45</span>
-    <span class="gLine" data-t="1.4">It&rsquo;s 7:45.</span>
-    <span class="gLine" data-t="2.0">Still in the car.</span>
-    <span class="gLine" data-t="2.6">Rain hammering down.</span>
-    <span class="gLine" data-t="3.2">Traffic at a standstill.</span>
-    <span class="gLine" data-t="3.8">Phone rings.</span>
-    <span class="gLine" data-t="4.3">Nurse off sick.</span>
-    <span class="gLine" data-t="4.8">Another message.</span>
-    <span class="gLine" data-t="5.3">Surgery 2 down.</span>
-    <span class="gLine" data-t="5.9">You&rsquo;re not even in yet.</span>
-    <span class="gLine" data-t="6.6" style="margin-top:18px;color:rgba(255,255,255,0.95)">Everyone looks to you for an answer.</span>
-    <span class="gLine" data-t="7.3" style="color:rgba(255,255,255,0.95)">You look to Pulse.</span>
-  </div>
-
-  <!-- Pulse wordmark — post blink -->
-  <div id="gWordmark">
-    <span id="gWordName">Pulse</span>
-    <span id="gWordSub">Staff management &middot; Built for dental</span>
-  </div>
-</div>
-
-<!-- Password -->
 <div id="gPass">
-  <p class="gPassLbl">Private preview</p>
-  <div class="gPassRow">
-    <input id="gi" class="gPassIn" type="password"
-      placeholder="Access code"
+  <div class="gRow">
+    <input id="gi" class="gIn" type="password"
+      placeholder="· · · · · · ·"
       autocomplete="off" autocorrect="off" spellcheck="false"/>
-    <button class="gPassBtn" onclick="tryPass()">Enter</button>
+    <button class="gBtn" onclick="tryPass()">→</button>
   </div>
-  <p class="gPassMsg" id="gm"></p>
+  <p class="gMsg" id="gm"></p>
 </div>
 
 <script>
 (function() {
-  var vid   = document.getElementById('gVideo');
-  var lines = document.querySelectorAll('.gLine');
-  var wmark = document.getElementById('gWordmark');
-  var story = document.getElementById('gStory');
-  var pass  = document.getElementById('gPass');
-  var seqDone = false;
-
-  function runSequence(getTime) {
-    if (seqDone) return;
-
-    // Show lines by timestamp
-    lines.forEach(function(line) {
-      if (getTime() >= parseFloat(line.dataset.t)) {
-        line.classList.add('on');
-      }
-    });
-
-    // At blink — clear story, show wordmark
-    if (getTime() >= 8.2 && !wmark.classList.contains('on')) {
-      story.style.opacity = '0';
-      story.style.transition = 'opacity 0.6s ease';
-      wmark.classList.add('on');
-    }
-
-    // Password appears near end
-    if (getTime() >= 10.0 && !pass.classList.contains('on')) {
-      pass.classList.add('on');
-      seqDone = true;
-      setTimeout(function() {
-        var inp = document.getElementById('gi');
-        if (inp) inp.focus();
-      }, 900);
-    }
-  }
-
-  // Drive from video timeupdate
+  var vid = document.getElementById('gVideo');
+  var pass = document.getElementById('gPass');
   vid.addEventListener('canplay', function() { vid.classList.add('on'); });
-  vid.addEventListener('timeupdate', function() { runSequence(function(){ return vid.currentTime; }); });
-  vid.addEventListener('ended', function() { pass.classList.add('on'); seqDone = true; });
-
-  // Timer fallback — fires if video doesn't load within 1.5s
-  var start = null;
-  var fallbackTimer = null;
-  function startFallback() {
-    if (vid.readyState >= 2) return; // video loaded fine
-    start = Date.now();
-    fallbackTimer = setInterval(function() {
-      if (vid.readyState >= 2) { clearInterval(fallbackTimer); return; }
-      var t = (Date.now() - start) / 1000;
-      runSequence(function(){ return t; });
-      if (seqDone) clearInterval(fallbackTimer);
-    }, 80);
-    // Also show a dark bg so text is readable without video
-    document.getElementById('gate').style.background = '#07060a';
-  }
-  setTimeout(startFallback, 1500);
+  setTimeout(function() {
+    pass.classList.add('on');
+    setTimeout(function() { var i = document.getElementById('gi'); if(i) i.focus(); }, 1400);
+  }, 1000);
+  setTimeout(function() { if(vid.readyState < 2) vid.classList.add('on'); }, 1600);
 })();
 </script>
 </div>
-
 <div id="app">
 
   <!-- NAV -->
@@ -894,8 +745,8 @@
   <!-- CREDIBILITY -->
   <div class="cred">
     <div class="cred-in" data-cred>
-      <p class="cred-q">"I built this because I was tired of running a dental practice from WhatsApp groups and a shared spreadsheet. Pulse is what I needed on that Monday morning."</p>
-      <p class="cred-a">Built by a principal dentist &mdash; tested across NHS and private practice.</p>
+      <p class="cred-q">&#8220;I built this because I was tired of running a dental practice from WhatsApp groups and a shared spreadsheet. Pulse is what I needed on that Monday morning.&#8221;</p>
+      <p class="cred-a">Conor O&#8217;Neill &mdash; Principal dentist &amp; co-owner, DCO Dental Group &mdash; built by a dentist, for dentists.</p>
     </div>
   </div>
 
