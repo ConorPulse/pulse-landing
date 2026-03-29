@@ -72,7 +72,7 @@
     .gate-msg { font-size: 11px; color: #c44; min-height: 16px; text-align: center; font-family: var(--sans); }
 
     /* ── APP ── */
-    #app { opacity: 0; transition: opacity 0.7s ease 0.2s; position: relative; z-index: 1; background: transparent; }
+    #app { opacity: 0; transition: opacity 0.8s ease; position: relative; z-index: 3; background: transparent; }
     #app.on { opacity: 1; }
 
     /* ── NAV ── */
@@ -282,7 +282,7 @@
     .cred-q {
       font-family: var(--serif); font-style: italic;
       font-size: clamp(22px, 4.5vw, 36px);
-      color: rgba(255,255,255,0.88); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 20px;
+      color: rgba(255,255,255,0.9); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 20px;
       border-left: 3px solid var(--teal); padding-left: 28px;
     }
     .cred-a { font-family: var(--sans); font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.04em; padding-left: 28px; }
@@ -324,12 +324,12 @@
     .final-h {
       font-family: var(--serif); font-style: italic; font-weight: 700;
       font-size: clamp(30px, 6.5vw, 48px);
-      color: var(--ink); line-height: 1.1; letter-spacing: -0.022em; margin-bottom: 12px;
+      color: rgba(255,255,255,0.88); line-height: 1.1; letter-spacing: -0.022em; margin-bottom: 12px;
       opacity: 0; transform: translateX(-14px); transition: opacity 0.4s 0.07s, transform 0.4s 0.07s;
     }
     .final-h.on { opacity: 1; transform: none; }
     .final-p {
-      font-family: var(--sans); font-size: 13px; color: var(--dim); line-height: 1.72; margin-bottom: 28px; max-width: 430px;
+      font-family: var(--sans); font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.72; margin-bottom: 28px; max-width: 430px;
       opacity: 0; transform: translateX(-14px); transition: opacity 0.4s 0.14s, transform 0.4s 0.14s;
     }
     .final-p.on { opacity: 1; transform: none; }
@@ -475,134 +475,58 @@
      ║  PASSWORD: change "pulse2026" below      ║
      ╚══════════════════════════════════════════╝ -->
 
-<div id="gate">
-<style>
-#gate {
-  position: fixed; inset: 0; z-index: 1000;
-  background: #07060a;
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.7s ease, visibility 0.7s ease;
-}
-#gate.out { opacity: 0; visibility: hidden; pointer-events: none; }
-
-/* password row */
-.gRow { display: flex; gap: 6px; }
-.gIn {
-  width: min(210px, 58vw);
-  padding: 10px 16px;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
-  background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.6);
-  font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: 13px; letter-spacing: 0.08em;
-  outline: none; transition: border-color 0.2s;
-  -webkit-text-fill-color: rgba(255,255,255,0.6);
-}
-.gIn::placeholder { color: rgba(255,255,255,0.15); letter-spacing: 0.2em; font-size: 11px; }
-.gIn:focus { border-color: rgba(255,255,255,0.25); }
-.gIn.err { border-color: rgba(210,60,60,0.7); animation: gShk 0.35s ease; }
-@keyframes gShk { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-.gBtn {
-  padding: 10px 14px; border-radius: 8px; border: none;
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.35);
-  font-size: 15px; cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.gBtn:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
-.gMsg { font-size: 10px; color: rgba(210,70,70,0.85); min-height: 14px; margin-top: 8px;
-  font-family: 'Instrument Sans', system-ui, sans-serif; text-align: center; }
-</style>
-
-<div style="display:flex;flex-direction:column;align-items:center;">
-  <div class="gRow">
-    <input id="gi" class="gIn" type="password"
-      placeholder="· · · · · · ·"
-      autocomplete="off" autocorrect="off" spellcheck="false"/>
-    <button class="gBtn" onclick="tryPass()">→</button>
-  </div>
-  <p class="gMsg" id="gm"></p>
-</div>
+<!-- LAYER 1: Eye video — always in DOM, fades in after password ────────── -->
+<div id="eyeLayer" style="position:fixed;inset:0;z-index:1;opacity:0;transition:opacity 1.4s ease;pointer-events:none;overflow:hidden;">
+  <video id="eyeVid" autoplay muted playsinline loop preload="auto"
+    style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+    <source src="eye.mp4" type="video/mp4">
+  </video>
+  <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(7,6,10,0.3) 0%,rgba(7,6,10,0.55) 50%,rgba(7,6,10,0.88) 100%);"></div>
 </div>
 
-<!-- ── INTRO (stage 2): eye + story, shown after correct password ── -->
-<div id="intro">
+<!-- LAYER 2: Story overlay — shown during intro sequence ─────────────────── -->
+<div id="storyLayer" style="position:fixed;inset:0;z-index:2;display:none;align-items:center;justify-content:center;flex-direction:column;">
 <style>
-#intro {
-  position: fixed; inset: 0; z-index: 0;
-  background: #07060a;
-  display: none;
-}
-#intro.on  { display: block; }
-#intro.behind { z-index: 0; background: transparent; }
+#storyLayer { display: none; }
+#storyLayer.on { display: flex; }
+#storyLayer.out { opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
 
-#iVideo {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0; transition: opacity 1.2s ease;
-}
-#intro::after {
-  content: "";
-  position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(to bottom, rgba(7,6,10,0.45) 0%, rgba(7,6,10,0.7) 55%, rgba(7,6,10,0.93) 100%);
-  pointer-events: none;
-}
-#iVideo.on { opacity: 1; }
-
-#iOverlay {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  z-index: 2; pointer-events: none;
-}
-#iStory { text-align: center; padding: 0 24px; }
 .iLine {
   display: block;
   font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: clamp(13px, 2.2vw, 18px);
+  font-size: clamp(14px, 2.4vw, 19px);
   font-weight: 400;
-  color: rgba(255,255,255,0.88);
-  letter-spacing: 0.02em; line-height: 1.9;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.02em; line-height: 2;
   opacity: 0; transition: opacity 0.5s ease;
-  text-shadow: 0 1px 12px rgba(0,0,0,0.9);
+  text-shadow: 0 1px 16px rgba(0,0,0,0.95);
 }
 .iLine.tag {
-  font-size: clamp(10px, 1.4vw, 13px); font-weight: 600;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.42); margin-bottom: 6px;
+  font-size: clamp(10px, 1.3vw, 12px); font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin-bottom: 8px;
 }
 .iLine.on { opacity: 1; }
 
-#iWordmark {
-  position: absolute; text-align: center;
-  opacity: 0; transition: opacity 1.2s ease;
-}
+#iWordmark { position:absolute; text-align:center; opacity:0; transition:opacity 1.2s ease; }
 #iWordmark.on { opacity: 1; }
 #iWordName {
   display: block;
   font-family: 'Instrument Serif', Georgia, serif;
   font-style: italic; font-weight: 700;
-  font-size: clamp(52px, 10vw, 96px);
-  color: #fff; letter-spacing: -0.03em;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.6); line-height: 1;
+  font-size: clamp(56px, 10vw, 100px);
+  color: rgba(255,255,255,0.92); letter-spacing: -0.03em; line-height: 1;
+  text-shadow: 0 2px 40px rgba(0,0,0,0.5);
 }
 #iWordSub {
-  display: block; margin-top: 10px;
+  display: block; margin-top: 12px;
   font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: clamp(9px, 1.4vw, 12px); font-weight: 600;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(255,255,255,0.4);
+  font-size: clamp(9px, 1.3vw, 12px); font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
 }
 </style>
-
-<video id="iVideo" autoplay muted playsinline preload="auto">
-  <source src="eye.mp4" type="video/mp4">
-</video>
-
-<div id="iOverlay">
-  <div id="iStory">
+  <div id="iStory" style="text-align:center;padding:0 28px;">
     <span class="iLine tag" data-t="0.6">Monday &middot; 07:45</span>
     <span class="iLine" data-t="1.4">It&rsquo;s 7:45.</span>
     <span class="iLine" data-t="2.0">Still in the car.</span>
@@ -613,15 +537,51 @@
     <span class="iLine" data-t="4.8">Another message.</span>
     <span class="iLine" data-t="5.3">Surgery 2 down.</span>
     <span class="iLine" data-t="5.9">You&rsquo;re not even in yet.</span>
-    <span class="iLine" data-t="6.6" style="margin-top:18px;color:rgba(255,255,255,0.95)">Everyone looks to you for an answer.</span>
-    <span class="iLine" data-t="7.3" style="color:rgba(255,255,255,0.95)">You look to Pulse.</span>
+    <span class="iLine" data-t="6.6" style="margin-top:20px;color:#fff;">Everyone looks to you for an answer.</span>
+    <span class="iLine" data-t="7.3" style="color:#fff;">You look to Pulse.</span>
   </div>
   <div id="iWordmark">
     <span id="iWordName">Pulse</span>
     <span id="iWordSub">Staff management &middot; Built for dental</span>
   </div>
 </div>
+
+<!-- LAYER 3: Gate — black screen with password ───────────────────────────── -->
+<div id="gate" style="position:fixed;inset:0;z-index:100;background:#07060a;display:flex;align-items:center;justify-content:center;transition:opacity 0.7s ease,visibility 0.7s ease;">
+<style>
+#gate.out { opacity:0; visibility:hidden; pointer-events:none; }
+.gRow { display:flex; gap:6px; }
+.gIn {
+  width:min(210px,58vw); padding:10px 16px;
+  border:1px solid rgba(255,255,255,0.1); border-radius:8px;
+  background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.6);
+  font-family:'Instrument Sans',system-ui,sans-serif;
+  font-size:13px; letter-spacing:0.08em; outline:none;
+  transition:border-color 0.2s; -webkit-text-fill-color:rgba(255,255,255,0.6);
+}
+.gIn::placeholder { color:rgba(255,255,255,0.14); letter-spacing:0.22em; font-size:11px; }
+.gIn:focus { border-color:rgba(255,255,255,0.28); }
+.gIn.err { border-color:rgba(210,60,60,0.7); animation:gShk 0.35s ease; }
+@keyframes gShk { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.gBtn {
+  padding:10px 14px; border-radius:8px; border:none;
+  background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.32);
+  font-size:15px; cursor:pointer; transition:background 0.2s,color 0.2s;
+}
+.gBtn:hover { background:rgba(255,255,255,0.13); color:rgba(255,255,255,0.72); }
+.gMsg { font-size:10px; color:rgba(210,70,70,0.85); min-height:14px; margin-top:8px;
+  font-family:'Instrument Sans',system-ui,sans-serif; text-align:center; }
+</style>
+  <div style="display:flex;flex-direction:column;align-items:center;">
+    <div class="gRow">
+      <input id="gi" class="gIn" type="password" placeholder="· · · · · · ·"
+        autocomplete="off" autocorrect="off" spellcheck="false"/>
+      <button class="gBtn" onclick="tryPass()">→</button>
+    </div>
+    <p class="gMsg" id="gm"></p>
+  </div>
 </div>
+
 <div id="app">
 
   <div style="height: 60vh;"></div>
@@ -793,100 +753,85 @@
 const PASS = "pulse2026";
 const app  = document.getElementById('app');
 
-// ── Stage 3: show app — keep intro video alive as permanent bg ──────────────
+// ── Stage 3: hide story, show app (eye stays as background) ─────────────────
 function showApp() {
-  const intro    = document.getElementById('intro');
-  const iOverlay = document.getElementById('iOverlay');
+  const story = document.getElementById('storyLayer');
+  story.classList.add('out');
+  setTimeout(() => { story.style.display = 'none'; }, 900);
 
-  // Fade out story overlay, keep video playing
-  if (iOverlay) { iOverlay.style.transition = 'opacity 0.8s ease'; iOverlay.style.opacity = '0'; }
-
-  // Drop intro behind the app (z-index:0, transparent bg)
-  intro.classList.add('behind');
-
-  // Bring up app
   app.style.display = 'block';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => app.classList.add('on'));
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => app.classList.add('on')));
   if (typeof boot === 'function') boot();
 }
 
-// ── Stage 2: run intro (eye + story) then call showApp ─────────────────────
+// ── Stage 2: fade in eye, run story sequence, then showApp ──────────────────
 function runIntro() {
-  const intro = document.getElementById('intro');
-  intro.style.display = 'block';
-  requestAnimationFrame(() => {
-    const vid    = document.getElementById('iVideo');
-    const lines  = document.querySelectorAll('.iLine');
-    const wmark  = document.getElementById('iWordmark');
-    const story  = document.getElementById('iStory');
-    let seqDone  = false;
+  const eye    = document.getElementById('eyeLayer');
+  const vid    = document.getElementById('eyeVid');
+  const story  = document.getElementById('storyLayer');
+  const lines  = document.querySelectorAll('.iLine');
+  const wmark  = document.getElementById('iWordmark');
+  const iStory = document.getElementById('iStory');
+  let done     = false;
 
-    function runSeq(getT) {
-      if (seqDone) return;
-      lines.forEach(l => { if (getT() >= parseFloat(l.dataset.t)) l.classList.add('on'); });
-      if (getT() >= 8.2 && !wmark.classList.contains('on')) {
-        story.style.opacity = '0'; story.style.transition = 'opacity 0.6s ease';
-        wmark.classList.add('on');
-      }
-      if (getT() >= 10.5 && !seqDone) { seqDone = true; showApp(); }
+  // Start video — it's always in DOM so should load fine
+  vid.play().catch(() => {});
+
+  // Fade in the eye
+  setTimeout(() => { eye.style.opacity = '1'; }, 50);
+
+  // Show story overlay
+  story.classList.add('on');
+
+  function tick(t) {
+    if (done) return;
+    lines.forEach(l => { if (t >= parseFloat(l.dataset.t)) l.classList.add('on'); });
+    if (t >= 8.2 && !wmark.classList.contains('on')) {
+      iStory.style.transition = 'opacity 0.7s ease';
+      iStory.style.opacity = '0';
+      wmark.classList.add('on');
     }
+    if (t >= 10.5) { done = true; showApp(); }
+  }
 
-    vid.addEventListener('canplay', () => vid.classList.add('on'));
-    vid.addEventListener('timeupdate', () => runSeq(() => vid.currentTime));
-    vid.addEventListener('ended', () => { if (!seqDone) { seqDone = true; showApp(); } });
-
-    // timer fallback
-    let start = null, timer = null;
-    function startFallback() {
-      if (vid.readyState >= 2) return;
-      intro.style.background = '#07060a';
-      start = Date.now();
-      timer = setInterval(() => {
-        if (vid.readyState >= 2) { clearInterval(timer); return; }
-        const t = (Date.now() - start) / 1000;
-        runSeq(() => t);
-        if (seqDone) clearInterval(timer);
-      }, 80);
+  // Use video time if available, otherwise wall clock
+  let start = null;
+  const timer = setInterval(() => {
+    if (done) { clearInterval(timer); return; }
+    if (vid.readyState >= 2 && !vid.paused) {
+      tick(vid.currentTime);
+    } else {
+      if (!start) start = Date.now();
+      tick((Date.now() - start) / 1000);
     }
-    setTimeout(startFallback, 1500);
-
-    // try play
-    vid.play().catch(() => {});
-  });
+  }, 80);
 }
 
-// ── Stage 1: password check ─────────────────────────────────────────────────
+// ── Stage 1: check password ──────────────────────────────────────────────────
 function tryPass() {
   const inp = document.getElementById('gi');
   const msg = document.getElementById('gm');
   if (!inp) return;
   if (inp.value.trim() === PASS) {
-    const gate = document.getElementById('gate');
-    gate.classList.add('out');
-    sessionStorage.setItem('pu','1');
-    setTimeout(runIntro, 700);
+    document.getElementById('gate').classList.add('out');
+    sessionStorage.setItem('pu', '1');
+    setTimeout(runIntro, 650);
   } else {
     inp.classList.add('err');
     msg.textContent = 'Incorrect. Try again.';
     setTimeout(() => { inp.classList.remove('err'); msg.textContent = ''; }, 400);
-    inp.value = '';
-    inp.focus();
+    inp.value = ''; inp.focus();
   }
 }
 
-// ── Skip gate + intro if already authenticated ──────────────────────────────
+// ── Returning visitors: skip gate+story, just show eye + app ─────────────────
 if (sessionStorage.getItem('pu')) {
   document.getElementById('gate').style.display = 'none';
-  // Still show intro so video plays as bg — just skip story, go straight to app
-  const introEl = document.getElementById('intro');
-  introEl.style.display = 'block';
-  const bgVid = document.getElementById('iVideo');
-  if (bgVid) { bgVid.classList.add('on'); bgVid.play().catch(()=>{}); }
-  introEl.classList.add('behind');
-  const ov = document.getElementById('iOverlay');
-  if (ov) ov.style.opacity = '0';
+  const eye = document.getElementById('eyeLayer');
+  const vid = document.getElementById('eyeVid');
+  eye.style.transition = 'none';
+  eye.style.opacity = '1';
+  vid.play().catch(() => {});
   app.style.display = 'block';
   app.classList.add('on');
   window.addEventListener('DOMContentLoaded', () => { if (typeof boot === 'function') boot(); });
