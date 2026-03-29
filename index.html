@@ -480,65 +480,42 @@
 #gate {
   position: fixed; inset: 0; z-index: 1000;
   background: #07060a;
-  transition: opacity 0.9s ease, visibility 0.9s ease;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.7s ease, visibility 0.7s ease;
 }
 #gate.out { opacity: 0; visibility: hidden; pointer-events: none; }
 
-#gVideo {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 1.4s ease;
-}
-#gVideo.on { opacity: 1; }
-
-#gPass {
-  position: absolute;
-  bottom: min(10vh, 72px);
-  left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center;
-  opacity: 0;
-  transition: opacity 1.6s ease;
-  pointer-events: none;
-  white-space: nowrap;
-}
-#gPass.on { opacity: 1; pointer-events: all; }
-
+/* password row */
 .gRow { display: flex; gap: 6px; }
 .gIn {
-  width: min(200px, 56vw);
-  padding: 9px 14px;
+  width: min(210px, 58vw);
+  padding: 10px 16px;
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 7px;
+  border-radius: 8px;
   background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.6);
   font-family: 'Instrument Sans', system-ui, sans-serif;
   font-size: 13px; letter-spacing: 0.08em;
   outline: none; transition: border-color 0.2s;
-  -webkit-text-fill-color: rgba(255,255,255,0.65);
+  -webkit-text-fill-color: rgba(255,255,255,0.6);
 }
-.gIn::placeholder { color: rgba(255,255,255,0.15); letter-spacing: 0.18em; font-size: 11px; }
-.gIn:focus { border-color: rgba(255,255,255,0.22); }
-.gIn.err { border-color: rgba(210,60,60,0.7); animation: gShake 0.35s ease; }
-@keyframes gShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.gIn::placeholder { color: rgba(255,255,255,0.15); letter-spacing: 0.2em; font-size: 11px; }
+.gIn:focus { border-color: rgba(255,255,255,0.25); }
+.gIn.err { border-color: rgba(210,60,60,0.7); animation: gShk 0.35s ease; }
+@keyframes gShk { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
 .gBtn {
-  padding: 9px 13px; border-radius: 7px; border: none;
-  background: rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.4);
-  font-size: 14px; cursor: pointer;
+  padding: 10px 14px; border-radius: 8px; border: none;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.35);
+  font-size: 15px; cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
-.gBtn:hover { background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.75); }
-.gMsg { font-size: 10px; color: rgba(210,70,70,0.85); min-height: 14px; margin-top: 7px;
-  font-family: 'Instrument Sans', system-ui, sans-serif; }
+.gBtn:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
+.gMsg { font-size: 10px; color: rgba(210,70,70,0.85); min-height: 14px; margin-top: 8px;
+  font-family: 'Instrument Sans', system-ui, sans-serif; text-align: center; }
 </style>
 
-<video id="gVideo" autoplay muted playsinline preload="auto" loop>
-  <source src="eye.mp4" type="video/mp4">
-</video>
-
-<div id="gPass">
+<div style="display:flex;flex-direction:column;align-items:center;">
   <div class="gRow">
     <input id="gi" class="gIn" type="password"
       placeholder="· · · · · · ·"
@@ -547,19 +524,98 @@
   </div>
   <p class="gMsg" id="gm"></p>
 </div>
+</div>
 
-<script>
-(function() {
-  var vid = document.getElementById('gVideo');
-  var pass = document.getElementById('gPass');
-  vid.addEventListener('canplay', function() { vid.classList.add('on'); });
-  setTimeout(function() {
-    pass.classList.add('on');
-    setTimeout(function() { var i = document.getElementById('gi'); if(i) i.focus(); }, 1400);
-  }, 1000);
-  setTimeout(function() { if(vid.readyState < 2) vid.classList.add('on'); }, 1600);
-})();
-</script>
+<!-- ── INTRO (stage 2): eye + story, shown after correct password ── -->
+<div id="intro">
+<style>
+#intro {
+  position: fixed; inset: 0; z-index: 999;
+  background: #07060a;
+  display: none;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+#intro.on  { display: block; }
+#intro.out { opacity: 0; visibility: hidden; pointer-events: none; }
+
+#iVideo {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+#iVideo.on { opacity: 1; }
+
+#iOverlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 2; pointer-events: none;
+}
+#iStory { text-align: center; padding: 0 24px; }
+.iLine {
+  display: block;
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  font-size: clamp(13px, 2.2vw, 18px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.02em; line-height: 1.9;
+  opacity: 0; transition: opacity 0.5s ease;
+  text-shadow: 0 1px 12px rgba(0,0,0,0.9);
+}
+.iLine.tag {
+  font-size: clamp(10px, 1.4vw, 13px); font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.42); margin-bottom: 6px;
+}
+.iLine.on { opacity: 1; }
+
+#iWordmark {
+  position: absolute; text-align: center;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+#iWordmark.on { opacity: 1; }
+#iWordName {
+  display: block;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic; font-weight: 700;
+  font-size: clamp(52px, 10vw, 96px);
+  color: #fff; letter-spacing: -0.03em;
+  text-shadow: 0 2px 40px rgba(0,0,0,0.6); line-height: 1;
+}
+#iWordSub {
+  display: block; margin-top: 10px;
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  font-size: clamp(9px, 1.4vw, 12px); font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+</style>
+
+<video id="iVideo" autoplay muted playsinline preload="auto">
+  <source src="eye.mp4" type="video/mp4">
+</video>
+
+<div id="iOverlay">
+  <div id="iStory">
+    <span class="iLine tag" data-t="0.6">Monday &middot; 07:45</span>
+    <span class="iLine" data-t="1.4">It&rsquo;s 7:45.</span>
+    <span class="iLine" data-t="2.0">Still in the car.</span>
+    <span class="iLine" data-t="2.6">Rain hammering down.</span>
+    <span class="iLine" data-t="3.2">Traffic at a standstill.</span>
+    <span class="iLine" data-t="3.8">Phone rings.</span>
+    <span class="iLine" data-t="4.3">Nurse off sick.</span>
+    <span class="iLine" data-t="4.8">Another message.</span>
+    <span class="iLine" data-t="5.3">Surgery 2 down.</span>
+    <span class="iLine" data-t="5.9">You&rsquo;re not even in yet.</span>
+    <span class="iLine" data-t="6.6" style="margin-top:18px;color:rgba(255,255,255,0.95)">Everyone looks to you for an answer.</span>
+    <span class="iLine" data-t="7.3" style="color:rgba(255,255,255,0.95)">You look to Pulse.</span>
+  </div>
+  <div id="iWordmark">
+    <span id="iWordName">Pulse</span>
+    <span id="iWordSub">Staff management &middot; Built for dental</span>
+  </div>
+</div>
 </div>
 <div id="app">
 
@@ -811,6 +867,62 @@
 const PASS = "pulse2026";
 const app  = document.getElementById('app');
 
+// ── Stage 3: show app after intro ──────────────────────────────────────────
+function showApp() {
+  const intro = document.getElementById('intro');
+  intro.classList.add('out');
+  setTimeout(() => { intro.style.display = 'none'; }, 900);
+  app.style.display = 'block';
+  requestAnimationFrame(() => app.classList.add('on'));
+  if (typeof boot === 'function') boot();
+}
+
+// ── Stage 2: run intro (eye + story) then call showApp ─────────────────────
+function runIntro() {
+  const intro = document.getElementById('intro');
+  intro.style.display = 'block';
+  requestAnimationFrame(() => {
+    const vid    = document.getElementById('iVideo');
+    const lines  = document.querySelectorAll('.iLine');
+    const wmark  = document.getElementById('iWordmark');
+    const story  = document.getElementById('iStory');
+    let seqDone  = false;
+
+    function runSeq(getT) {
+      if (seqDone) return;
+      lines.forEach(l => { if (getT() >= parseFloat(l.dataset.t)) l.classList.add('on'); });
+      if (getT() >= 8.2 && !wmark.classList.contains('on')) {
+        story.style.opacity = '0'; story.style.transition = 'opacity 0.6s ease';
+        wmark.classList.add('on');
+      }
+      if (getT() >= 10.5 && !seqDone) { seqDone = true; showApp(); }
+    }
+
+    vid.addEventListener('canplay', () => vid.classList.add('on'));
+    vid.addEventListener('timeupdate', () => runSeq(() => vid.currentTime));
+    vid.addEventListener('ended', () => { if (!seqDone) { seqDone = true; showApp(); } });
+
+    // timer fallback
+    let start = null, timer = null;
+    function startFallback() {
+      if (vid.readyState >= 2) return;
+      intro.style.background = '#07060a';
+      start = Date.now();
+      timer = setInterval(() => {
+        if (vid.readyState >= 2) { clearInterval(timer); return; }
+        const t = (Date.now() - start) / 1000;
+        runSeq(() => t);
+        if (seqDone) clearInterval(timer);
+      }, 80);
+    }
+    setTimeout(startFallback, 1500);
+
+    // try play
+    vid.play().catch(() => {});
+  });
+}
+
+// ── Stage 1: password check ─────────────────────────────────────────────────
 function tryPass() {
   const inp = document.getElementById('gi');
   const msg = document.getElementById('gm');
@@ -818,22 +930,20 @@ function tryPass() {
   if (inp.value.trim() === PASS) {
     const gate = document.getElementById('gate');
     gate.classList.add('out');
-    app.style.display = 'block';
-    requestAnimationFrame(() => app.classList.add('on'));
     sessionStorage.setItem('pu','1');
-    if (typeof boot === 'function') boot();
+    setTimeout(runIntro, 700);
   } else {
     inp.classList.add('err');
     msg.textContent = 'Incorrect. Try again.';
-    setTimeout(() => { inp.classList.remove('err'); msg.textContent=''; }, 400);
+    setTimeout(() => { inp.classList.remove('err'); msg.textContent = ''; }, 400);
     inp.value = '';
     inp.focus();
   }
 }
 
+// ── Skip gate + intro if already authenticated ──────────────────────────────
 if (sessionStorage.getItem('pu')) {
-  const gate = document.getElementById('gate');
-  if (gate) gate.style.display = 'none';
+  document.getElementById('gate').style.display = 'none';
   app.style.display = 'block';
   app.classList.add('on');
   window.addEventListener('DOMContentLoaded', () => { if (typeof boot === 'function') boot(); });
@@ -841,9 +951,10 @@ if (sessionStorage.getItem('pu')) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const inp = document.getElementById('gi');
-  if (inp) inp.addEventListener('keydown', e => e.key === 'Enter' && tryPass());
-  // After password fades in, focus input
-  setTimeout(() => { if (inp) inp.focus(); }, 3400);
+  if (inp) {
+    inp.focus();
+    inp.addEventListener('keydown', e => e.key === 'Enter' && tryPass());
+  }
 });
 </script>
 
