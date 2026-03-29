@@ -821,15 +821,18 @@
           <div class="ob-dot on"></div>
         </div>
         <div class="ob-step-label">Step 2 of 2</div>
-        <h2 class="ob-h">Ready to meet Iris.</h2>
+        <h2 class="ob-h">Almost there.</h2>
         <p class="ob-p">Your practice will be live at:</p>
         <div class="ob-confirm-url" id="obConfirmUrl">yourpractice.omni-rota.com</div>
         <div class="ob-confirm-role" id="obConfirmRole"></div>
         <div class="ob-pm-note" id="obConfirmPmNote" style="display:none">
           You're setting up as a <strong>Practice Manager</strong>. Your principal will need to create their own account to access owner-level settings. Iris will remind you of this during setup.
         </div>
+        <div style="background:rgba(58,173,152,0.06);border:1px solid rgba(58,173,152,0.15);border-radius:10px;padding:14px 16px;margin:16px 0;font-family:var(--sans);font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">
+          We'll send a <strong style="color:rgba(255,255,255,0.8);">magic login link</strong> to your email. Click it and Iris will be waiting to walk you through setup — takes about 3 minutes.
+        </div>
         <button class="ob-btn" id="obLaunchBtn" onclick="obLaunch()">
-          Launch Iris →
+          Send my login link →
         </button>
         <button class="ob-back" onclick="obBack()">← Back</button>
       </div>
@@ -1104,20 +1107,45 @@ function obLaunch() {
 
   const btn = document.getElementById('obLaunchBtn');
   btn.disabled = true;
-  btn.textContent = 'Launching…';
+  btn.textContent = 'Sending link…';
 
-  // Pass name, email, role, practice as URL params so Iris can greet them
-  const params = new URLSearchParams({
-    name:     name,
-    email:    email,
-    role:     obRole,
-    practice: practice,
-    new:      '1',
+  const params = new URLSearchParams({ name, email, role: obRole, practice, new: '1' });
+  const redirectTo = `https://${slug}.omni-rota.com?${params.toString()}`;
+
+  // Send magic link via Supabase
+  const SB_URL = 'https://ditrrhclhckomjmdtyfm.supabase.co';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpdHJyaGNsaGNrb21qbWR0eWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTY0NzAsImV4cCI6MjA4ODkzMjQ3MH0.BEc6t9c6aGkb2XQ8C60vH0satwxiDM3l757RjRVrRKY';
+
+  fetch(`${SB_URL}/auth/v1/otp`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SB_KEY,
+    },
+    body: JSON.stringify({ email, create_user: true, options: { email_redirect_to: redirectTo } }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error) throw new Error(data.error.message || 'Could not send link');
+    // Show check inbox screen
+    document.getElementById('obStep2').innerHTML = `
+      <div style="text-align:center;padding:12px 0;">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(58,173,152,0.1);border:1px solid rgba(58,173,152,0.25);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="#3aad98" stroke-width="1.5"/><path d="M2 8l10 6 10-6" stroke="#3aad98" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h2 style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:700;font-size:24px;color:rgba(255,255,255,0.95);letter-spacing:-0.02em;margin-bottom:10px;">Check your inbox.</h2>
+        <p style="font-family:'Instrument Sans',sans-serif;font-size:13px;color:rgba(255,255,255,0.4);line-height:1.65;margin-bottom:6px;">Login link sent to</p>
+        <p style="font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;color:#3aad98;margin-bottom:20px;">${email}</p>
+        <p style="font-family:'Instrument Sans',sans-serif;font-size:13px;color:rgba(255,255,255,0.35);line-height:1.65;">Click the link and Iris will be waiting to set up <strong style="color:rgba(255,255,255,0.6);">${practice}</strong>.</p>
+        <p style="font-family:'Instrument Sans',sans-serif;font-size:11px;color:rgba(255,255,255,0.2);margin-top:20px;">Check spam if it doesn't arrive within a minute.</p>
+      </div>
+    `;
+  })
+  .catch(err => {
+    btn.disabled = false;
+    btn.textContent = 'Send my login link →';
+    alert('Could not send link: ' + err.message);
   });
-
-  setTimeout(() => {
-    window.location.href = `https://${slug}.omni-rota.com?${params.toString()}`;
-  }, 600);
 }
 
 // Close on overlay click
