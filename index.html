@@ -61,10 +61,10 @@
     .iLine {
       display: block;
       font-family: var(--sans);
-      font-size: clamp(15px, 2.6vw, 20px);
+      font-size: clamp(16px, 2.8vw, 22px);
       font-weight: 400; color: rgba(255,255,255,0.88);
       letter-spacing: 0.02em; line-height: 2;
-      opacity: 0; transition: opacity 0.5s ease;
+      opacity: 0; transition: opacity 0.7s ease;
       text-shadow: 0 1px 20px rgba(0,0,0,1);
     }
     .iLine.tag {
@@ -75,8 +75,12 @@
     .iLine.big { color: #fff; margin-top: 16px; }
     .iLine.on  { opacity: 1; }
     #iWordmark {
-      position: absolute; text-align: center;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
       opacity: 0; transition: opacity 1.2s ease;
+      width: 90%;
     }
     #iWordmark.on { opacity: 1; }
     #iWordName {
@@ -332,7 +336,7 @@
 
     /* ── FOOTER ── */
     footer {
-      background: var(--dark); padding: 28px;
+      background: transparent; padding: 28px;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
     }
     .ft-l { display: flex; align-items: center; gap: 9px; }
@@ -353,18 +357,18 @@
 <!-- STORY: hidden/shown via JS style.display -->
 <div id="storyLayer">
   <div id="iStory">
-    <span class="iLine tag" data-t="0.6">Monday &middot; 07:45</span>
-    <span class="iLine" data-t="1.4">It&rsquo;s 7:45.</span>
-    <span class="iLine" data-t="2.0">Still in the car.</span>
-    <span class="iLine" data-t="2.6">Rain hammering down.</span>
+    <span class="iLine tag" data-t="1.0">Monday &middot; 07:45</span>
+    <span class="iLine" data-t="2.2">It&rsquo;s 7:45.</span>
+    <span class="iLine" data-t="5.2">Still in the car.</span>
+    <span class="iLine" data-t="4.2">Rain hammering down.</span>
     <span class="iLine" data-t="3.2">Traffic at a standstill.</span>
-    <span class="iLine" data-t="3.8">Phone rings.</span>
-    <span class="iLine" data-t="4.3">Nurse off sick.</span>
-    <span class="iLine" data-t="4.8">Another message.</span>
-    <span class="iLine" data-t="5.3">Surgery 2 down.</span>
-    <span class="iLine" data-t="5.9">You&rsquo;re not even in yet.</span>
-    <span class="iLine big" data-t="6.6">Everyone looks to you for an answer.</span>
-    <span class="iLine big" data-t="7.3">You look to Pulse.</span>
+    <span class="iLine" data-t="6.0">Phone rings.</span>
+    <span class="iLine" data-t="6.8">Nurse off sick.</span>
+    <span class="iLine" data-t="7.5">Another message.</span>
+    <span class="iLine" data-t="8.2">Surgery 2 down.</span>
+    <span class="iLine" data-t="9.0">You&rsquo;re not even in yet.</span>
+    <span class="iLine big" data-t="10.2">Everyone looks to you for an answer.</span>
+    <span class="iLine big" data-t="11.2">You look to Pulse.</span>
   </div>
   <div id="iWordmark">
     <span id="iWordName">Pulse</span>
@@ -592,12 +596,12 @@ function runIntro() {
 
     lines.forEach(l => { if (t >= parseFloat(l.dataset.t)) l.classList.add('on'); });
 
-    if (t >= 8.2 && !wmark.classList.contains('on')) {
+    if (t >= 13.0 && !wmark.classList.contains('on')) {
       istory.style.transition = 'opacity 0.7s ease';
       istory.style.opacity = '0';
       wmark.classList.add('on');
     }
-    if (t >= 11.5) { done = true; showApp(); }
+    if (t >= 16.5) { done = true; showApp(); }
   }, 80);
 }
 
