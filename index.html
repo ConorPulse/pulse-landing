@@ -11,9 +11,9 @@
   <style>
     /* ── RESET ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scrollbar-width: none; scroll-behavior: smooth; }
+    html { scrollbar-width: none; scroll-behavior: smooth; background: #07060a; }
     ::-webkit-scrollbar { display: none; }
-    body { background: #07060a; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    body { background: #07060a; min-height: 100vh; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 
     /* ── TOKENS ── */
     :root {
@@ -57,52 +57,36 @@
       align-items: center; justify-content: center; flex-direction: column;
       pointer-events: none;
     }
-    #iLine {
-      font-family: 'Instrument Sans', system-ui, sans-serif;
-      font-size: clamp(18px, 3.5vw, 28px);
-      font-weight: 300;
-      color: rgba(255,255,255,0.9);
-      letter-spacing: 0.01em;
-      text-align: center;
-      padding: 0 40px;
-      opacity: 0;
-      transition: opacity 0.6s ease;
-      text-shadow: 0 2px 24px rgba(0,0,0,0.9);
-      line-height: 1.4;
-    }
-    #iLine.tag-style {
-      font-size: clamp(10px, 1.4vw, 13px);
-      font-weight: 600; letter-spacing: 0.22em;
-      text-transform: uppercase; color: rgba(255,255,255,0.45);
-    }
-    #iLine.big-style {
-      font-size: clamp(20px, 4vw, 32px);
-      font-weight: 400; color: #fff;
-    }
-    #iLine {
-      font-family: var(--sans);
-      font-size: clamp(16px, 2.8vw, 22px);
-      font-weight: 400;
-      color: rgba(255,255,255,0.9);
-      letter-spacing: 0.02em;
-      line-height: 1.5;
+    #iLines {
       text-align: center;
       padding: 0 28px;
-      text-shadow: 0 1px 20px rgba(0,0,0,1);
-      max-width: 600px;
+      max-width: 560px;
     }
-    #iLine.tag-style {
-      font-size: clamp(10px, 1.3vw, 12px);
-      font-weight: 600;
-      letter-spacing: 0.22em;
+    .sLine {
+      display: block;
+      font-family: var(--sans);
+      font-size: clamp(15px, 2.6vw, 20px);
+      font-weight: 400;
+      color: rgba(255,255,255,0.82);
+      letter-spacing: 0.02em;
+      line-height: 1.9;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+      text-shadow: 0 1px 24px rgba(0,0,0,0.95);
+    }
+    .sLine.on { opacity: 1; }
+    .sLine.tag-style {
+      font-size: clamp(10px, 1.3vw, 11px);
+      font-weight: 600; letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.32);
+      margin-bottom: 4px;
     }
-    #iLine.big-style {
-      font-size: clamp(18px, 3.2vw, 26px);
-      color: #fff;
-      font-weight: 500;
+    .sLine.big-style {
+      color: rgba(255,255,255,0.95);
+      margin-top: 8px;
     }
+    
     #iWordmark {
       position: absolute;
       top: 50%; left: 50%;
@@ -193,11 +177,11 @@
     .sf-row .fi { flex: 1; min-width: 160px; }
     .fi {
       padding: 12px 14px; border: 1.5px solid var(--faint); border-radius: 9px;
-      background: var(--bg); color: var(--ink); font-family: var(--sans);
+      background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); font-family: var(--sans);
       font-size: 13px; outline: none; transition: border-color 0.2s; width: 100%;
     }
     .fi:focus { border-color: rgba(42,125,110,0.35); }
-    .fi::placeholder { color: rgba(26,25,23,0.28); }
+    .fi::placeholder { color: rgba(255,255,255,0.2); }
     .fb {
       padding: 12px 22px; border-radius: 9px; border: none;
       background: var(--teal); color: #fff;
@@ -384,7 +368,7 @@
 
 <!-- STORY: hidden/shown via JS style.display -->
 <div id="storyLayer">
-  <div id="iLine" style="display:none;"></div>
+  <div id="iLines"></div>
   <div id="iWordmark" style="display:none;">
     <span id="iWordName">Pulse</span>
     <span id="iWordSub">Staff management &middot; Built for dental</span>
@@ -573,27 +557,11 @@
 const PASS = "pulse2026";
 const app  = document.getElementById('app');
 
-// ── Story sequence ────────────────────────────────────────────────────────────
-// Each entry: [text, cssClass, holdMs, pauseAfterMs]
-const STORY = [
-  ['Monday · 07:45',                     'tag-style',  1400,  200],
-  ["It\u2019s 7:45.",                         '',           1200,  100],
-  ['Still in the car.',                   '',           1200,  100],
-  ['Rain hammering down.',                '',           1200,  100],
-  ['Traffic at a standstill.',            '',           1200,  100],
-  ['Phone rings.',                        '',           1000,  400],
-  ['Nurse off sick.',                     '',           1200,  100],
-  ['Another message.',                    '',           1000,  100],
-  ['Surgery 2 down.',                     '',           1200,  100],
-  ["You\u2019re not even in yet.",            '',           1400,  600],
-  ['Everyone looks to you for an answer.','big-style',  2000,  200],
-  ['You look to Pulse.',                  'big-style',  2400,  0  ],
-];
-
+// ── Stage 3: fade out story, show page ──────────────────────────────────────
 function showApp() {
   const story = document.getElementById('storyLayer');
   story.style.transition = 'opacity 0.9s ease';
-  story.style.opacity    = '0';
+  story.style.opacity = '0';
   setTimeout(() => { story.style.display = 'none'; }, 900);
 
   app.style.display = 'block';
@@ -603,56 +571,58 @@ function showApp() {
   }));
 }
 
-function showWordmark(cb) {
-  const story  = document.getElementById('storyLayer');
-  const iline  = document.getElementById('iLine');
-  const wmark  = document.getElementById('iWordmark');
+// ── Story: each line appears and STAYS, building up like thoughts ────────────
+const STORY = [
+  { text: "Monday · 07:45",                      cls: "tag-style",  delay: 1000  },
+  { text: "It’s 7:45.",                           cls: "",           delay: 2200  },
+  { text: "Still in the car.",                    cls: "",           delay: 3400  },
+  { text: "Rain hammering down.",                 cls: "",           delay: 4600  },
+  { text: "Traffic at a standstill.",             cls: "",           delay: 5800  },
+  { text: "Phone rings.",                         cls: "",           delay: 7000  },
+  { text: "Nurse off sick.",                      cls: "",           delay: 7900  },
+  { text: "Another message.",                     cls: "",           delay: 8700  },
+  { text: "Surgery 2 down.",                      cls: "",           delay: 9500  },
+  { text: "You’re not even in yet.",              cls: "",           delay: 10600 },
+  { text: "Everyone looks to you for an answer.", cls: "big-style",  delay: 12000 },
+  { text: "You look to Pulse.",                   cls: "big-style",  delay: 13200 },
+];
 
-  // Fade out the last story line
-  iline.style.opacity = '0';
+function runStory(cb) {
+  const container = document.getElementById('iLines');
+  if (!container) { cb(); return; }
 
-  setTimeout(() => {
-    // Hide the text line, show wordmark
-    iline.style.display = 'none';
-    if (wmark) {
-      wmark.style.display = 'block';
-      wmark.style.opacity = '0';
-      wmark.style.transition = 'opacity 1.2s ease';
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        wmark.style.opacity = '1';
-      }));
-    }
-    // Hold wordmark for 3 seconds then go to page
-    setTimeout(cb, 3000);
-  }, 700);
-}
-
-function runStory(index, cb) {
-  if (index >= STORY.length) { showWordmark(cb); return; }
-
-  const [text, cls, holdMs, pauseAfterMs] = STORY[index];
-  const iline = document.getElementById('iLine');
-
-  // Set content and class
-  iline.textContent  = text;
-  iline.className    = cls || '';
-  iline.style.transition = 'opacity 0.6s ease';
-  iline.style.opacity    = '0';
-  iline.style.display    = 'block';
-
-  // Fade in
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    iline.style.opacity = '1';
-  }));
-
-  // Hold, then fade out, then next line
-  setTimeout(() => {
-    iline.style.transition = 'opacity 0.5s ease';
-    iline.style.opacity    = '0';
+  STORY.forEach(({ text, cls, delay }) => {
     setTimeout(() => {
-      runStory(index + 1, cb);
-    }, 500 + pauseAfterMs);
-  }, holdMs);
+      const span = document.createElement('span');
+      span.className = 'sLine' + (cls ? ' ' + cls : '');
+      span.textContent = text;
+      container.appendChild(span);
+      // Trigger fade-in on next frame
+      requestAnimationFrame(() => requestAnimationFrame(() => span.classList.add('on')));
+    }, delay);
+  });
+
+  // After last line + pause, show wordmark then call cb
+  const lastDelay = STORY[STORY.length - 1].delay;
+  setTimeout(() => {
+    // Fade all lines out together
+    container.style.transition = 'opacity 0.8s ease';
+    container.style.opacity = '0';
+
+    // Show Pulse wordmark
+    setTimeout(() => {
+      container.style.display = 'none';
+      const wmark = document.getElementById('iWordmark');
+      if (wmark) {
+        wmark.style.display = 'block';
+        wmark.style.opacity = '0';
+        wmark.style.transition = 'opacity 1.2s ease';
+        requestAnimationFrame(() => requestAnimationFrame(() => wmark.style.opacity = '1'));
+      }
+      // Hold wordmark 3s then go to page
+      setTimeout(cb, 3000);
+    }, 900);
+  }, lastDelay + 2200);
 }
 
 function runIntro() {
@@ -663,14 +633,14 @@ function runIntro() {
   // Fade in eye video
   eye.style.opacity = '1';
 
-  // Show story overlay
+  // Show story overlay — flex column, centred
   story.style.cssText = 'position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;';
 
   // Play video
   if (vid) vid.play().catch(() => {});
 
-  // Run story sequence then show app
-  runStory(0, showApp);
+  // Run accumulating story then show app
+  runStory(showApp);
 }
 
 function tryPass() {
