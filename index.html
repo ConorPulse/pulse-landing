@@ -584,7 +584,7 @@
 
 <div id="app">
 
-  <div style="height: 60vh;"></div>
+  <div style="height: 40vh;"></div>
   <!-- COMMAND PALETTE SECTION -->
   <div class="pal-section">
     <p class="tag" data-tag style="max-width:600px;margin:0 auto 22px;">Three keystrokes. Nurse found. Shift covered.</p>
@@ -751,6 +751,107 @@
 
 <script>
 const PASS = "pulse2026";
+
+// ── Boot: scroll observers + command palette animation ──────────────────────
+function boot() {
+  // Immediately show everything — no scroll gating for now
+  document.querySelectorAll('[data-fc]').forEach((el, i) => {
+    setTimeout(() => el.classList.add('on'), 100 + i * 60);
+  });
+  document.querySelectorAll('[data-bandtag]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 80);
+  });
+  document.querySelectorAll('[data-tag]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 80);
+  });
+  document.querySelectorAll('[data-cred]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 200);
+  });
+  document.querySelectorAll('[data-penny]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 260);
+  });
+  document.querySelectorAll('[data-pricing]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 300);
+  });
+  document.querySelectorAll('[data-final]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 340);
+  });
+  document.querySelectorAll('[data-finalh]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 380);
+  });
+  document.querySelectorAll('[data-finalp]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 420);
+  });
+  document.querySelectorAll('[data-box]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 200);
+  });
+  document.querySelectorAll('[data-finalf]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 460);
+  });
+
+  document.querySelectorAll('[data-pal]').forEach(el => {
+    setTimeout(() => el.classList.add('on'), 100);
+  });
+
+  // Scroll-based reveal
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('[data-fc],[data-bandtag],[data-cred],[data-penny],[data-pricing],[data-final],[data-finalh],[data-finalp],[data-finalf],[data-pal]').forEach(el => io.observe(el));
+  }
+
+  // Command palette demo animation
+  palAnim();
+}
+
+function palAnim() {
+  const q = document.getElementById('pq');
+  const body = document.querySelector('.pal-body');
+  const pw = document.getElementById('pw');
+  if (!q) return;
+
+  const queries = ['Find cover for Hannah Watson…', 'Who can do MOS today?', 'Check Brooklands staffing…'];
+  let qi = 0;
+  const ph = q.querySelector('.pal-ph');
+  const cur = q.querySelector('.pal-cur');
+
+  function typeQuery(str, cb) {
+    if (ph) ph.style.display = 'none';
+    let i = 0;
+    const node = document.createTextNode('');
+    if (cur) q.insertBefore(node, cur); else q.appendChild(node);
+    const t = setInterval(() => {
+      node.textContent += str[i++];
+      if (i >= str.length) { clearInterval(t); setTimeout(cb, 800); }
+    }, 55);
+  }
+
+  function clearQuery(node) {
+    return new Promise(res => {
+      const t = setInterval(() => {
+        if (!node.textContent.length) { clearInterval(t); res(); return; }
+        node.textContent = node.textContent.slice(0, -1);
+      }, 25);
+    });
+  }
+
+  async function cycle() {
+    if (!document.getElementById('pq')) return;
+    const str = queries[qi % queries.length];
+    qi++;
+    await new Promise(res => typeQuery(str, res));
+    if (body) { body.classList.add('on'); pw && pw.classList.add('open'); }
+    await new Promise(res => setTimeout(res, 2200));
+    if (body) { body.classList.remove('on'); pw && pw.classList.remove('open'); }
+    const node = q.querySelector('text') || Array.from(q.childNodes).find(n => n.nodeType === 3 && n.textContent);
+    if (node) await clearQuery(node);
+    if (ph) ph.style.display = '';
+    setTimeout(cycle, 900);
+  }
+
+  setTimeout(cycle, 1200);
+}
 const app  = document.getElementById('app');
 
 // ── Stage 3: hide story, show app (eye stays as background) ─────────────────
