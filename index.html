@@ -72,7 +72,7 @@
     .gate-msg { font-size: 11px; color: #c44; min-height: 16px; text-align: center; font-family: var(--sans); }
 
     /* ── APP ── */
-    #app { opacity: 0; transition: opacity 0.8s ease; position: relative; z-index: 3; background: transparent; }
+    #app { opacity: 0; transition: opacity 0.8s ease; position: relative; z-index: 3; background: transparent; display: none; }
     #app.on { opacity: 1; }
 
     /* ── NAV ── */
@@ -282,10 +282,10 @@
     .cred-q {
       font-family: var(--serif); font-style: italic;
       font-size: clamp(22px, 4.5vw, 36px);
-      color: rgba(255,255,255,0.9); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 20px;
+      color: rgba(255,255,255,0.92); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 20px;
       border-left: 3px solid var(--teal); padding-left: 28px;
     }
-    .cred-a { font-family: var(--sans); font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.04em; padding-left: 28px; }
+    .cred-a { font-family: var(--sans); font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; padding-left: 28px; }
 
     /* ── PENNY ── */
     .penny { max-width: 600px; margin: 48px auto 0; padding: 0 28px; }
@@ -299,8 +299,8 @@
     }
     .penny-card.on { opacity: 1; transform: none; }
     .penny-logo { flex-shrink: 0; margin-top: 2px; }
-    .penny-h { font-family: var(--serif); font-weight: 700; font-size: 16px; color: rgba(255,255,255,0.88); letter-spacing: -0.015em; margin-bottom: 6px; }
-    .penny-p { font-family: var(--sans); font-size: 12.5px; color: rgba(255,255,255,0.4); line-height: 1.65; }
+    .penny-h { font-family: var(--serif); font-weight: 700; font-size: 16px; color: rgba(255,255,255,0.95); letter-spacing: -0.015em; margin-bottom: 6px; }
+    .penny-p { font-family: var(--sans); font-size: 12.5px; color: rgba(255,255,255,0.6); line-height: 1.65; }
 
     /* ── PRICING ── */
     .pricing {
@@ -494,9 +494,9 @@
 .iLine {
   display: block;
   font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: clamp(14px, 2.4vw, 19px);
+  font-size: clamp(15px, 2.6vw, 21px);
   font-weight: 400;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.95);
   letter-spacing: 0.02em; line-height: 2;
   opacity: 0; transition: opacity 0.5s ease;
   text-shadow: 0 1px 16px rgba(0,0,0,0.95);
@@ -584,7 +584,7 @@
 
 <div id="app">
 
-  <div style="height: 40vh;"></div>
+  <div style="height: 20px;"></div>
   <!-- COMMAND PALETTE SECTION -->
   <div class="pal-section">
     <p class="tag" data-tag style="max-width:600px;margin:0 auto 22px;">Three keystrokes. Nurse found. Shift covered.</p>
@@ -692,7 +692,7 @@
   <div class="cred">
     <div class="cred-in" data-cred>
       <p class="cred-q">&#8220;I built this because I was tired of running a dental practice from WhatsApp groups and a shared spreadsheet. Pulse is what I needed on that Monday morning.&#8221;</p>
-      <p class="cred-a">Conor O&#8217;Neill &mdash; Principal dentist &amp; co-owner, DCO Dental Group &mdash; built by a dentist, for dentists.</p>
+      <p class="cred-a">Built by Conor O&#8217;Neill &amp; Emily Chapman &mdash; dentists, principals, practice owners.</p>
     </div>
   </div>
 
@@ -811,7 +811,7 @@ function palAnim() {
   const pw = document.getElementById('pw');
   if (!q) return;
 
-  const queries = ['Find cover for Hannah Watson…', 'Who can do MOS today?', 'Check Brooklands staffing…'];
+  const queries = ['Find cover for Savanna Butler…', 'Who can do MOS today?', 'Check Brooklands staffing…'];
   let qi = 0;
   const ph = q.querySelector('.pal-ph');
   const cur = q.querySelector('.pal-cur');
@@ -860,8 +860,15 @@ function showApp() {
   story.classList.add('out');
   setTimeout(() => { story.style.display = 'none'; }, 900);
 
+  // Show app — display:block first, then opacity transition
   app.style.display = 'block';
-  requestAnimationFrame(() => requestAnimationFrame(() => app.classList.add('on')));
+  app.style.opacity = '0';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      app.style.opacity = '';
+      app.classList.add('on');
+    });
+  });
   if (typeof boot === 'function') boot();
 }
 
@@ -892,7 +899,7 @@ function runIntro() {
       iStory.style.opacity = '0';
       wmark.classList.add('on');
     }
-    if (t >= 10.5) { done = true; showApp(); }
+    if (t >= 11.5) { done = true; showApp(); }
   }
 
   // Use video time if available, otherwise wall clock
